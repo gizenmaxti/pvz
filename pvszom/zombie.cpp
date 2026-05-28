@@ -3,6 +3,11 @@
 #include"tool.h"
 #include "zombie.h"
 
+void loadzombie() {
+	
+}
+
+
 zombie initzombie(int hp, int type, int attack, float speed, float x, float y) {
 	zombie z;
 	z.hp = hp;

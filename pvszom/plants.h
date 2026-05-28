@@ -19,8 +19,9 @@ struct plant {
 };
 
 struct grassmap {
-	plant pla;
+	plant *pla=nullptr;
 	int x, y;
+	int hp;
 };
 //extern std::vector<IMAGE> sun;
 extern grassmap smap[5][9];

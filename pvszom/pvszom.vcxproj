@@ -19,15 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="plants.h" />
+    <ClInclude Include="tool.h" />
+    <ClInclude Include="zombie.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="plants.cpp" />
     <ClCompile Include="tool.cpp" />
     <ClCompile Include="zombie.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="plants.h" />
-    <ClInclude Include="tool.h" />
-    <ClInclude Include="zombie.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

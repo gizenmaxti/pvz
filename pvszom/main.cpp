@@ -71,8 +71,9 @@ void userClick() {
 				if (plantcards[type].isslected && msg.x > 160 && msg.x < 160 + 9 * 80 && msg.y>100 && msg.y < 100 + 5 * 100) {
 					int i = (msg.y - 100) / 100;
 					int j = (msg.x - 160) / 80;
-					if (smap[i][j].pla.hp <= 0) {
-						smap[i][j].pla = plantcards[type];
+					if (smap[i][j].hp <= 0) {
+						smap[i][j].pla = &plantcards[type];
+						smap[i][j].hp = plantcards[type].hp;
 						smap[i][j].x = j;
 						smap[i][j].y = i;
 					}
