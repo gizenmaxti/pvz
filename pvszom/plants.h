@@ -9,7 +9,7 @@ struct plant {
 	IMAGE cardimg;
 	bool isslected = false;
 	int type;
-	int hp;
+	int hp=100;
 	bool isAttacking = false;
 	std::vector<IMAGE> dance;
 	//IMAGE bullet;
@@ -23,7 +23,6 @@ struct grassmap {
 	int x, y;
 	int hp;
 };
-//extern std::vector<IMAGE> sun;
 extern grassmap smap[5][9];
 extern std::vector<plant> plantcards;
 void loadplantcard();

@@ -59,11 +59,6 @@ void loadplantcard() {
 		}
 		plantcards.push_back(p);
 	}
-	/*for (int i = 0; i < n; ++i) {
-		IMAGE img;
-		loadimage(&img,("res\\images\\plants\\sun\\"+std::to_string(i)+".png").c_str());
-		sun.push_back(img);
-	}*/
 }
 void sunning() {
 

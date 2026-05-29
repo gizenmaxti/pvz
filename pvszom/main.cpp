@@ -11,45 +11,10 @@
 #define WIN_HEIGHT 600
 #define CARD_COUNT 8
 
-std::vector<zombie>zombies;
 IMAGE imgbg_3;
 IMAGE imgwd;
 
 int framecount = 0;
-
-void pushzombie(int hp, int type, int attack, float speed, int x, int y, int time) {
-	static int spwarn = 0, nextspwar = 0;
-	if (spwarn >= nextspwar) {
-		zombies.push_back(initzombie(hp, type, attack, speed, x, y));
-		spwarn = 0;
-		nextspwar = rand() % time + 400;
-	}
-	spwarn++;
-}
-
-void zombiecreat(int framecount) {
-	static int spwarn = 0, nextspwar = 0;
-	int row = rand() % 5;
-	int type = rand() % 4;
-	if (framecount == 60)zombies.push_back(initzombie(100, 4, 20, 0.15, 800, 100 * row));
-	if (framecount > 400) {
-		pushzombie(100, 0, 20, 0.15, 800, 100 * row, 700);
-	}
-	if (framecount > 900) {
-		pushzombie(200, 2, 20, 0.15, 800, 100 * row, 2000);
-	}
-	if (framecount > 2000) {
-		pushzombie(500, 1, 20, 0.15, 800, 100 * row, 3000);
-	}
-	if (framecount > 5000) {
-		pushzombie(1000, 3, 20, 0.5, 800, 100 * row, 4000);
-	}
-}
-void updatezombie() {
-	for (auto& z : zombies) {
-		z.move();
-	}
-}
 int x, y;
 static int type = 0;
 void userClick() {
@@ -84,6 +49,7 @@ void userClick() {
 
 	}
 }
+
 void updatamouse() {
 	if(plantcards[type].isslected&&type>=0&&type<=8) {
 		if (type == 3) {
@@ -93,11 +59,26 @@ void updatamouse() {
 		plantcards[type].dancing(x-30, y-25, 150);
 	}
 }
+void updatazombie() {
+	for (auto& z : allzombie) {
+		int y = int(z.x) / 100;
+		if(y>=0&&y<=8&& smap[z.row][y].hp > 0 ) {
+			z.isEating = true;
+			if (framecount % 30 == 0) {
+				smap[z.row][y].hp -= z.z->attack;
+			}
+		}
+		else z.isEating = false;
+		z.move();
+	}
+}
 void gameInit() {
+	srand((unsigned int)time(NULL));
 	initgraph(WIN_WIDTH, WIN_HEIGHT);
 	loadimage(&imgbg_3, "res\\images\\bg_3.png");
 	loadimage(&imgwd, "res\\images\\wd.jpg", 650, 100);
 	loadplantcard();
+	loadzombie();
 }
 void updateWindow() {
 	BeginBatchDraw();
@@ -106,8 +87,10 @@ void updateWindow() {
 	drawcard();
 	updataglass();
 	updatamouse();
-	zombiecreat(framecount);
-	updatezombie();
+	updatazombie();
+	/*zombiecreat(framecount);
+	updatezombie();*/
+	putzombie(framecount);
 	FlushBatchDraw();
 	EndBatchDraw();
 }
