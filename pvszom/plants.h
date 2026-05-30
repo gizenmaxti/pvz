@@ -10,18 +10,22 @@ struct plant {
 	bool isslected = false;
 	int type;
 	int hp=100;
-	bool isAttacking = false;
 	std::vector<IMAGE> dance;
 	//IMAGE bullet;
 	void dancing(int x,int y,int elp);
 	int value;
 	std::vector<IMAGE> bullet;
+	void attacking(int x,int y,int t);
 };
 
 struct grassmap {
-	plant *pla=nullptr;
+	int type=0;
 	int x, y;
 	int hp;
+	int ti = 0;
+	bool isAttacking = false;
+	int plframe = 0;
+	bool addsun = false;
 };
 extern grassmap smap[5][9];
 extern std::vector<plant> plantcards;

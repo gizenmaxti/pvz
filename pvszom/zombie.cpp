@@ -8,23 +8,21 @@
 std::vector<zoms> allzombie;
 std::vector<zombie>typezombie;
 void putzombie(int time) {
-	static int t = 0,c=0,k=2000,cnt=0;
+	static int t = 0,c=0,k=1000,cnt=0;
 	int type = rand()%100;
 	if(type>=0&&type<60)type=0;
 	else if(type>=60&&type<85)type=2;
 	else if(type>=85&&type<97)type=1;
 	else if(type>=97&&type<=100)type=3;
+	if (time == 60)type = 4;
 	zoms z;
-	if (time == 60) {
-		type = 4;
-	}
-	z.z = &typezombie[type];
 	z.hp = typezombie[type].hp;
+	z.type = type;
 	z.isEating = false;
 	z.row = rand() % 5;
 	z.isEating = false;
-	z.x = 800;
-	z.y = 105 * z.row;
+	z.x = 1000;
+	z.zy = 105 * z.row;
 	if (time == 60) {
 		allzombie.push_back(z);
 	}
@@ -34,7 +32,7 @@ void putzombie(int time) {
 		c = rand() % k;
 	}
 	cnt++;
-	if (k > 500 && cnt == 5) {
+	if (k > 300 && cnt == 5) {
 		k--;
 		cnt = 0;
 	}
@@ -74,21 +72,21 @@ void zoms::walking() {
 	auto now = std::chrono::steady_clock::now();
 	float elapsed = std::chrono::duration<float>(now - lastframe).count();
 	if (elapsed >= 0.1f) {
-		currentframe = (currentframe + 1) % z->walk.size();
+		walkcurrentframe = (walkcurrentframe + 1) % typezombie[type].walk.size();
 		lastframe = now;
 	}
-	putimagePNG(x, y+25, &z->walk[currentframe]);
-	x -= z->speed;
+	putimagePNG(x-100, zy+25, &typezombie[type].walk[walkcurrentframe]);
+	x -= typezombie[type].speed;
 }
 
 void zoms::eating() {
 	auto now = std::chrono::steady_clock::now();
 	float elapsed = std::chrono::duration<float>(now - lastframe).count();
 	if (elapsed >= 0.1f) {
-		currentframe = (currentframe + 1) % z->eat.size();
+		eatcurrentframe = (eatcurrentframe + 1) % typezombie[type].eat.size();
 		lastframe = now;
 	}
-	putimagePNG(x, y+25, &z->eat[currentframe]);
+	putimagePNG(x-100, zy+25, &typezombie[type].eat[eatcurrentframe]);
 }
 void zoms::move() {
 	if (isEating) {

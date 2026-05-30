@@ -3,6 +3,7 @@
 #include <easyx.h>
 #include "plants.h"
 #include"tool.h"
+#include "zombie.h"
 
  std::vector<plant> plantcards;
  grassmap smap[5][9];
@@ -64,7 +65,6 @@ void sunning() {
 
 }
 void drawcard() {
-	std::string cardpath = "res\\images\\cards";
 	for (int i = 0; i < 8; ++i) {
 		putimage(250 + i * 70, 5,&plantcards[i].cardimg);
 	}
@@ -86,12 +86,34 @@ void updataglass() {
 	for(int i=0;i<5;++i) {
 		for(int j=0;j<9;++j) {
 			if(smap[i][j].hp>0) {
-				if (smap[i][j].pla->type == 3) {
-					smap[i][j].pla->dancing(smap[i][j].x*82+150,smap[i][j].y*100-70,255);
+				if (smap[i][j].type == 3) {
+					plantcards[smap[i][j].type].dancing(smap[i][j].x * 82 + 150, smap[i][j].y * 100 - 70, 255);
 				}
 				else
-				smap[i][j].pla->dancing(smap[i][j].x*80+165,smap[i][j].y*100+90,255);
+					plantcards[smap[i][j].type].dancing(smap[i][j].x * 80 + 165, smap[i][j].y * 100 + 90, 255);
+				if (smap[i][j].type == 2) {
+					smap[i][j].plframe = (smap[i][j].plframe + 1) % plantcards[smap[i][j].type].bullet.size();
+					if (smap[i][j].ti > 1000 && smap[i][j].ti<2000&& smap[i][j].addsun==false) {
+						putimagePNG(smap[i][j].x * 80 + 165, smap[i][j].y * 100 + 90, &plantcards[smap[i][j].type].bullet[smap[i][j].plframe], 255);
+					}
+					smap[i][j].ti=(smap[i][j].ti+1)%2500;
+				}
+				if (smap[i][j].isAttacking && i >= 0 && i < 5 && j >= 0 && j < 10) {
+					if (smap[i][j].type==0&&smap[i][j].ti < 10) {
+						putimagePNG(smap[i][j].x * 80 + 165, smap[i][j].y * 100 + 90, &plantcards[smap[i][j].type].bullet[0], 255);
+						smap[i][j].ti ++;
+					}
+					else if (smap[i][j].type == 0) {
+						smap[i][j].hp = 0;
+					}
+					if ((smap[i][j].type == 1 || smap[i][j].type == 5 || smap[i][j].type == 7)) {
+						smap[i][j].plframe = (smap[i][j].plframe+1)%100;
+						putimagePNG(smap[i][j].x * 80 + 200 + smap[i][j].plframe*8, smap[i][j].y * 100 + 90, &plantcards[smap[i][j].type].bullet[0], 255);
+					}
+				}
 			}
+			
 		}
 	}
+
 }
