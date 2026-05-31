@@ -6,6 +6,7 @@
 #include "tool.h"
 #include "zombie.h"
 #include "plants.h"
+#include <thread>
 
 #define WIN_WIDTH 900
 #define WIN_HEIGHT 600
@@ -45,6 +46,7 @@ void userClick() {
 						smap[i][j].y = i;
 						smap[i][j].ti = 0;
 						smap[i][j].isAttacking = false;
+						smap[i][j].distance = 9999;
 					}
 					if (j >= 0 && j < 9 && i >= 0 && i < 5 && smap[i][j].hp > 0) {
 						if (smap[i][j].addsun == false) {
@@ -90,8 +92,14 @@ void updatazombie() {
 				smap[z.row][col].isAttacking = true;
 			}
 			for (int i = 0; i < 9; ++i) {
-				if (z.row >= 0 && z.row < 5 && col > 0 && col < 9 && (smap[z.row][i].type == 1 || smap[z.row][i].type == 5 || smap[z.row][i].type == 7)&& smap[z.row][i].hp>0) {
+				if (z.row >= 0 && z.row < 5 && col > 0 && col < 9 && (smap[z.row][i].type == 1 || smap[z.row][i].type == 5 || smap[z.row][i].type == 7) && smap[z.row][i].hp>0) {
 					smap[z.row][i].isAttacking = true;
+					if (smap[z.row][i].distance <= 0) {
+						z.hp -= 1;
+					}
+					else {
+						smap[z.row][i].distance = z.x;
+					}
 				}
 			}
 			z.move();
@@ -121,11 +129,34 @@ void updateWindow() {
 	EndBatchDraw();
 }
 void gameloop() {
-	while (1) {
+	// 目标帧率 60 FPS，每帧应耗时约 16.666... 毫秒
+	const auto frameDuration = std::chrono::milliseconds(16);
+	auto nextFrameTime = std::chrono::steady_clock::now();
+
+	// 帧率统计变量（每秒打印一次）
+	static int frameCount = 0;
+	static auto lastStatTime = std::chrono::steady_clock::now();
+
+	while (true) {
+		// ----- 执行一帧的逻辑 -----
 		framecount++;
-		updateWindow();
-		userClick();
-		Sleep(16);
+		updateWindow();   // 绘制、更新植物、阳光等
+		userClick();      // 处理鼠标输入
+
+		// 等待至下一帧的预定时间点（实现精确 60 帧）
+		nextFrameTime += frameDuration;
+		std::this_thread::sleep_until(nextFrameTime);
+
+		// ----- 帧率统计（每秒输出一次）-----
+		frameCount++;
+		auto now = std::chrono::steady_clock::now();
+		double elapsed = std::chrono::duration<double>(now - lastStatTime).count();
+		if (elapsed >= 1.0) {
+			double fps = frameCount / elapsed;
+			printf("FPS: %.1f, 僵尸数量: %d\n", fps, (int)allzombie.size());
+			frameCount = 0;
+			lastStatTime = now;
+		}
 	}
 }
 

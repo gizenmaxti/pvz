@@ -106,9 +106,16 @@ void updataglass() {
 					else if (smap[i][j].type == 0) {
 						smap[i][j].hp = 0;
 					}
-					if ((smap[i][j].type == 1 || smap[i][j].type == 5 || smap[i][j].type == 7)) {
+					if ((smap[i][j].type == 1 || smap[i][j].type == 5 || smap[i][j].type == 7)&& smap[i][j].distance<0) {
 						smap[i][j].plframe = (smap[i][j].plframe+1)%100;
-						putimagePNG(smap[i][j].x * 80 + 200 + smap[i][j].plframe*8, smap[i][j].y * 100 + 90, &plantcards[smap[i][j].type].bullet[0], 255);
+						putimagePNG(smap[i][j].x * 80 + 200 + smap[i][j].plframe * 8, smap[i][j].y * 100 + 90, &plantcards[smap[i][j].type].bullet[0], 255);
+						smap[i][j].distance -= smap[i][j].plframe * 8;
+					}
+					if (smap[i][j].type == 5) {
+
+					}
+					if (smap[i][j].type == 7) {
+
 					}
 				}
 			}

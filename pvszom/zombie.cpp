@@ -26,7 +26,7 @@ void putzombie(int time) {
 	if (time == 60) {
 		allzombie.push_back(z);
 	}
-	if (time > 200&&time>(t + c)&&time<20000) {
+	if (time > 200&&time>(t + c)&&time<200000) {
 		allzombie.push_back(z);
 		t = time;
 		c = rand() % k;

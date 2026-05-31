@@ -26,6 +26,7 @@ struct grassmap {
 	bool isAttacking = false;
 	int plframe = 0;
 	bool addsun = false;
+	float distance = 9999;
 };
 extern grassmap smap[5][9];
 extern std::vector<plant> plantcards;
