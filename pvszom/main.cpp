@@ -6,11 +6,11 @@
 #include "tool.h"
 #include "zombie.h"
 #include "plants.h"
-#include <thread>
 
 #define WIN_WIDTH 900
 #define WIN_HEIGHT 600
 #define CARD_COUNT 8
+#define INITSUN 5000
 
 IMAGE imgbg_3;
 IMAGE imgwd;
@@ -18,7 +18,33 @@ IMAGE imgwd;
 int framecount = 0;
 int mousex, mousey;
 static int type = 0;
-static int suncount = 50;
+static int suncount = INITSUN;
+int sunframe = 0;
+float suny = 0;
+bool suncatch = true;
+float drop_the_sunx = rand() % WIN_WIDTH + 160;
+float drop_the_suny = rand() % WIN_HEIGHT + 100;
+bool gameover = false;
+
+void drowsun() {
+	setbkmode(TRANSPARENT);
+	settextcolor(RGB(0, 0, 0));
+	settextstyle(20, 0, "Arial");
+	std::string suntext = "阳光: " + std::to_string(suncount);
+	outtextxy(165,71,suntext.c_str());
+}
+void drop_the_sun() {
+	sunframe = (sunframe + 1) % plantcards[2].bullet.size();
+	if (suncatch) {
+		putimagePNG(drop_the_sunx, suny, &plantcards[2].bullet[sunframe], 255);
+	}
+	if(framecount%1000==0) {
+		drop_the_sunx = rand() % (WIN_WIDTH) + 160;
+		drop_the_suny = rand() % (WIN_HEIGHT) + 100;
+		suncatch = true;
+	}
+	if(suny< drop_the_suny)suny++;
+}
 
 void userClick() {
 	ExMessage msg;
@@ -28,8 +54,10 @@ void userClick() {
 		if (msg.message == WM_LBUTTONDOWN) {
 			if (msg.x > 250 && msg.x < 250 + 8 * 70 && msg.y > 5 && msg.y < 5 + 88) {
 				type = (msg.x - 250) / 70;
-				plantcards[type].dancing(msg.x, msg.y, 180);
-				plantcards[type].isslected = true;
+				if (suncount >= plantcards[type].value) {
+					plantcards[type].dancing(msg.x, msg.y, 180);
+					plantcards[type].isslected = true;
+				}
 			}
 		}
 		if (msg.message == WM_MOUSEMOVE) {
@@ -46,20 +74,23 @@ void userClick() {
 						smap[i][j].y = i;
 						smap[i][j].ti = 0;
 						smap[i][j].isAttacking = false;
-						smap[i][j].distance = 9999;
-					}
-					if (j >= 0 && j < 9 && i >= 0 && i < 5 && smap[i][j].hp > 0) {
-						if (smap[i][j].addsun == false) {
-							suncount += 50;
-							smap[i][j].addsun = true;
-							smap[i][j].ti = 0;
-						}
+						suncount -= plantcards[type].value;
 					}
 				}
 				plantcards[type].isslected = false;
 			}
+			if (j >= 0 && j < 9 && i >= 0 && i < 5 && smap[i][j].hp > 0) {
+				if (smap[i][j].addsun) {
+					suncount += 50;
+					smap[i][j].ti = 0;
+					smap[i][j].addsun = false;
+				}
+			}
+			if (suncatch && msg.x >= drop_the_sunx - 50 && msg.x <= drop_the_sunx + 50 && msg.y >= suny - 50 && msg.y <= suny + 50) {
+				suncount += 50;
+				suncatch = false;
+			}
 		}
-
 	}
 }
 
@@ -76,34 +107,50 @@ void updatazombie() {
 	for (auto it = allzombie.begin(); it != allzombie.end();) {
 		zoms& z = *it;
 		if (z.hp <= 0) {
+			for (int i = 0; i < 9; ++i) {
+				if (smap[z.row][i].hp > 0) {
+					smap[z.row][i].isAttacking = false;
+				}
+			}
 			it=allzombie.erase(it);
 		}
 		else {
-			int col = int(z.x-160) / 80;
-			if (col >= 0 && col < 9&&smap[z.row][col].hp > 0) {
+			int col = int(z.x - 160) / 80;
+			if (col >= 0 && col < 9 && smap[z.row][col].hp > 0) {
 				z.isEating = true;
 				if (framecount % 30 == 0) {
 					smap[z.row][col].hp -= typezombie[z.type].attack;
 				}
 			}
 			else z.isEating = false;
-			if(z.row>=0&&z.row<5&&col > 0 && col < 9 && smap[z.row][col].hp > 0 && smap[z.row][col].type==0) {
+			if (z.row >= 0 && z.row < 5 && col >= 0 && col < 9 && smap[z.row][col].hp > 0 && smap[z.row][col].type == 0) {
 				z.hp -= 1000;
 				smap[z.row][col].isAttacking = true;
 			}
 			for (int i = 0; i < 9; ++i) {
-				if (z.row >= 0 && z.row < 5 && col > 0 && col < 9 && (smap[z.row][i].type == 1 || smap[z.row][i].type == 5 || smap[z.row][i].type == 7) && smap[z.row][i].hp>0) {
+				if (smap[z.row][i].hp > 0 && smap[z.row][i].type == 1 || smap[z.row][i].type == 5 || smap[z.row][i].type == 7) {
 					smap[z.row][i].isAttacking = true;
-					if (smap[z.row][i].distance <= 0) {
-						z.hp -= 1;
-					}
-					else {
-						smap[z.row][i].distance = z.x;
-					}
 				}
+			}
+			for (auto& b : bullets) {
+				if (b.active && z.row >= 0 && z.row < 5 && b.x > z.x-20 && b.x < z.x + 80 && b.y > z.zy && b.y < z.zy + 100) {
+					z.hp -= b.damage;
+					if(b.type==5) {
+						z.x += float(typezombie[z.type].speed)*2;
+					}
+					b.active = false;
+				}
+				if (b.x > 900)b.active = false;
+			}
+			if (smap[z.row][col].hp > 0 && smap[z.row][col].type == 6) {
+				z.hp -= 1000;
+				smap[z.row][col].isAttacking = true;
 			}
 			z.move();
 			++it;
+			if(z.x < 160) {
+				gameover = true;
+			}
 		}
 	}
 }
@@ -116,47 +163,33 @@ void gameInit() {
 	loadplantcard();
 	loadzombie();
 }
+
+
+
 void updateWindow() {
 	BeginBatchDraw();
 	putimage(0, 0, &imgbg_3);//背景
+	drop_the_sun();
 	putimage(160, 0, &imgwd);//卡片窗口
 	drawcard();
+	drowsun();
 	updataglass();
 	updatamouse();
+	updatebllet();
 	updatazombie();
 	putzombie(framecount);
 	FlushBatchDraw();
 	EndBatchDraw();
 }
+
+
+
 void gameloop() {
-	// 目标帧率 60 FPS，每帧应耗时约 16.666... 毫秒
-	const auto frameDuration = std::chrono::milliseconds(16);
-	auto nextFrameTime = std::chrono::steady_clock::now();
-
-	// 帧率统计变量（每秒打印一次）
-	static int frameCount = 0;
-	static auto lastStatTime = std::chrono::steady_clock::now();
-
-	while (true) {
-		// ----- 执行一帧的逻辑 -----
+	while (1) {
 		framecount++;
-		updateWindow();   // 绘制、更新植物、阳光等
-		userClick();      // 处理鼠标输入
-
-		// 等待至下一帧的预定时间点（实现精确 60 帧）
-		nextFrameTime += frameDuration;
-		std::this_thread::sleep_until(nextFrameTime);
-
-		// ----- 帧率统计（每秒输出一次）-----
-		frameCount++;
-		auto now = std::chrono::steady_clock::now();
-		double elapsed = std::chrono::duration<double>(now - lastStatTime).count();
-		if (elapsed >= 1.0) {
-			double fps = frameCount / elapsed;
-			printf("FPS: %.1f, 僵尸数量: %d\n", fps, (int)allzombie.size());
-			frameCount = 0;
-			lastStatTime = now;
-		}
+		updateWindow();
+		userClick();
+		Sleep(16);
 	}
 }
 

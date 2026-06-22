@@ -13,8 +13,8 @@ struct zombie {
 	bool isEating=false;
 	std::vector<IMAGE> walk;
 	std::vector<IMAGE> eat;
-	void walking();
-	void eating();
+	void walking(int alpha);
+	void eating(int alpha);
 	void move();
 };
 
@@ -26,9 +26,10 @@ struct zoms {
 	bool isEating;
 	int row;
 	float x, zy;
-	void walking();
-	void eating();
+	void walking(int color);
+	void eating(int color);
 	void move();
+	void debuffmove();
 	int type=0;
 };
 extern std::vector<zoms>allzombie;

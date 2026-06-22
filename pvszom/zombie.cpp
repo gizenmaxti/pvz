@@ -32,7 +32,7 @@ void putzombie(int time) {
 		c = rand() % k;
 	}
 	cnt++;
-	if (k > 300 && cnt == 5) {
+	if (k > 200 && cnt == 3) {
 		k--;
 		cnt = 0;
 	}
@@ -68,31 +68,32 @@ void loadzombie() {
 	}
 }
 
-void zoms::walking() {
+void zoms::walking(int alpha) {
 	auto now = std::chrono::steady_clock::now();
 	float elapsed = std::chrono::duration<float>(now - lastframe).count();
 	if (elapsed >= 0.1f) {
 		walkcurrentframe = (walkcurrentframe + 1) % typezombie[type].walk.size();
 		lastframe = now;
 	}
-	putimagePNG(x-100, zy+25, &typezombie[type].walk[walkcurrentframe]);
+	putimagePNG(x-100, zy+25, &typezombie[type].walk[walkcurrentframe], alpha);
 	x -= typezombie[type].speed;
 }
 
-void zoms::eating() {
+
+void zoms::eating(int alpha) {
 	auto now = std::chrono::steady_clock::now();
 	float elapsed = std::chrono::duration<float>(now - lastframe).count();
 	if (elapsed >= 0.1f) {
 		eatcurrentframe = (eatcurrentframe + 1) % typezombie[type].eat.size();
 		lastframe = now;
 	}
-	putimagePNG(x-100, zy+25, &typezombie[type].eat[eatcurrentframe]);
+	putimagePNG(x-100, zy+25, &typezombie[type].eat[eatcurrentframe], alpha);
 }
 void zoms::move() {
 	if (isEating) {
-		eating();
+		eating(255);
 	}
 	else {
-		walking();
+		walking(255);
 	}
 }
