@@ -3,6 +3,7 @@
 #include <string>
 #pragma comment(lib, "MSIMG32.lib")
 #include "tool.h"
+#include <chrono>
 
 void putimagePNG(int x, int y, IMAGE* img, int alpha) {
     int w = img->getwidth(), h = img->getheight();
@@ -23,4 +24,13 @@ int countfiles(const std::string folderpath) {
     }
     FindClose(hfind);
     return count;
+}
+std::vector<timer>timers;
+void timer::updatetime(float time,std::function<void ()>f) {
+    auto now = std::chrono::steady_clock::now();
+    float elapsed = std::chrono::duration<float>(now - lastframe).count();
+    if (elapsed >= time) {
+		f();
+        lastframe = now;
+    }
 }

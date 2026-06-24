@@ -26,6 +26,8 @@ float drop_the_sunx = rand() % WIN_WIDTH + 160;
 float drop_the_suny = rand() % WIN_HEIGHT + 100;
 bool gameover = false;
 
+
+
 void drowsun() {
 	setbkmode(TRANSPARENT);
 	settextcolor(RGB(0, 0, 0));
@@ -33,18 +35,18 @@ void drowsun() {
 	std::string suntext = "阳光: " + std::to_string(suncount);
 	outtextxy(165,71,suntext.c_str());
 }
-void drop_the_sun() {
-	sunframe = (sunframe + 1) % plantcards[2].bullet.size();
-	if (suncatch) {
-		putimagePNG(drop_the_sunx, suny, &plantcards[2].bullet[sunframe], 255);
-	}
-	if(framecount%1000==0) {
-		drop_the_sunx = rand() % (WIN_WIDTH) + 160;
-		drop_the_suny = rand() % (WIN_HEIGHT) + 100;
-		suncatch = true;
-	}
-	if(suny< drop_the_suny)suny++;
-}
+//void drop_the_sun() {
+//	sunframe = (sunframe + 1) % plantcards[2].bullet.size();
+//	if (suncatch) {
+//		putimagePNG(drop_the_sunx, suny, &plantcards[2].bullet[sunframe], 255);
+//	}
+//	if(framecount%1000==0) {
+//		drop_the_sunx = rand() % (WIN_WIDTH) + 160;
+//		drop_the_suny = rand() % (WIN_HEIGHT) + 100;
+//		suncatch = true;
+//	}
+//	if(suny< drop_the_suny)suny++;
+//}
 
 void userClick() {
 	ExMessage msg;
@@ -55,6 +57,7 @@ void userClick() {
 			if (msg.x > 250 && msg.x < 250 + 8 * 70 && msg.y > 5 && msg.y < 5 + 88) {
 				type = (msg.x - 250) / 70;
 				if (suncount >= plantcards[type].value) {
+					if(type ==3)plantcards[type].dancing(msg.x-150, msg.y-70, 180);
 					plantcards[type].dancing(msg.x, msg.y, 180);
 					plantcards[type].isslected = true;
 				}
@@ -123,17 +126,30 @@ void updatazombie() {
 				}
 			}
 			else z.isEating = false;
-			if (z.row >= 0 && z.row < 5 && col >= 0 && col < 9 && smap[z.row][col].hp > 0 && smap[z.row][col].type == 0) {
-				z.hp -= 1000;
+
+			if (smap[z.row][col].hp > 0 && smap[z.row][col].type == 0) {
 				smap[z.row][col].isAttacking = true;
+				z.hp -= 1000;
 			}
+
 			for (int i = 0; i < 9; ++i) {
 				if (smap[z.row][i].hp > 0 && smap[z.row][i].type == 1 || smap[z.row][i].type == 5 || smap[z.row][i].type == 7) {
 					smap[z.row][i].isAttacking = true;
 				}
 			}
+
 			for (auto& b : bullets) {
-				if (b.active && z.row >= 0 && z.row < 5 && b.x > z.x-20 && b.x < z.x + 80 && b.y > z.zy && b.y < z.zy + 100) {
+				if (b.active) {
+					if(b.type==1||b.type==5||b.type==7) {
+						putimagePNG(b.x, b.y, &b.img, 255);
+						b.x += b.speed;
+						if (b.x > z.x - 20 && b.x < z.x + 80 && b.y > z.zy && b.y < z.zy + 100) {
+							z.hp -= b.damage;
+							b.active = false;
+						}
+					}
+				}
+				if (b.active && b.x > z.x-20 && b.x < z.x + 80 && b.y > z.zy && b.y < z.zy + 100) {
 					z.hp -= b.damage;
 					if(b.type==5) {
 						z.x += float(typezombie[z.type].speed)*2;
@@ -169,7 +185,7 @@ void gameInit() {
 void updateWindow() {
 	BeginBatchDraw();
 	putimage(0, 0, &imgbg_3);//背景
-	drop_the_sun();
+	//drop_the_sun();
 	putimage(160, 0, &imgwd);//卡片窗口
 	drawcard();
 	drowsun();
@@ -177,7 +193,8 @@ void updateWindow() {
 	updatamouse();
 	updatebllet();
 	updatazombie();
-	putzombie(framecount);
+	putzombie();
+	//putzombie(framecount);
 	FlushBatchDraw();
 	EndBatchDraw();
 }

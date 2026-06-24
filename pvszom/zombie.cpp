@@ -7,36 +7,67 @@
 
 std::vector<zoms> allzombie;
 std::vector<zombie>typezombie;
-void putzombie(int time) {
-	static int t = 0,c=0,k=1000,cnt=0;
-	int type = rand()%100;
-	if(type>=0&&type<60)type=0;
-	else if(type>=60&&type<85)type=2;
-	else if(type>=85&&type<97)type=1;
-	else if(type>=97&&type<=100)type=3;
-	if (time == 60)type = 4;
+
+int nowframe = 0;
+void putzombie() {
+	if (framecount < 60)return;
 	zoms z;
-	z.hp = typezombie[type].hp;
-	z.type = type;
-	z.isEating = false;
-	z.row = rand() % 5;
-	z.isEating = false;
-	z.x = 1000;
-	z.zy = 105 * z.row;
-	if (time == 60) {
-		allzombie.push_back(z);
+	bool putz = false;
+	if(framecount==60) {
+		z.type = 4;
+		putz = true;
 	}
-	if (time > 200&&time>(t + c)&&time<200000) {
-		allzombie.push_back(z);
-		t = time;
-		c = rand() % k;
+	if(framecount>200&&framecount-nowframe-rand()%1000>100) {
+		int type = rand() % 100;
+		std::cout << "type: " << type << std::endl;
+		if (type >= 0 && type < 60)z.type = 0;
+		else if (type >= 60 && type < 85)z.type = 2;
+		else if (type >= 85 && type < 97)z.type = 1;
+		else if (type >= 97 && type <= 100)z.type = 3;
+		putz = true;
+		nowframe = framecount;
 	}
-	cnt++;
-	if (k > 200 && cnt == 3) {
-		k--;
-		cnt = 0;
+	if (putz) {
+		std::cout << "z.type: " << z.type << std::endl;
+		z.hp = typezombie[z.type].hp;
+		z.isEating = false;
+		z.row = rand() % 5;
+		z.x = 1000;
+		z.zy = 105 * z.row;
+		allzombie.push_back(z);
 	}
 }
+
+//void putzombie(int time) {
+//	static int t = 0,c=0,k=1000,cnt=0;
+//	zoms z;
+//	z.hp = typezombie[type].hp;
+//	z.isEating = false;
+//	z.row = rand() % 5;
+//	z.isEating = false;
+//	z.x = 1000;
+//	z.zy = 105 * z.row;
+//	if (time == 60) {
+//		z.type = 4;
+//		allzombie.push_back(z);
+//	}
+//	if (time > 200&&time>(t + c)&&time<200000) {
+//		if (type >= 0 && type < 60)type = 0;
+//		else if (type >= 60 && type < 85)type = 2;
+//		else if (type >= 85 && type < 97)type = 1;
+//		else if (type >= 97 && type <= 100)type = 3;
+//		z.type = type;
+//		allzombie.push_back(z);
+//		t = time;
+//		c = rand() % k;
+//	}
+//	cnt++;
+//	if (k > 200 && cnt == 3) {
+//		k--;
+//		cnt = 0;
+//	}
+//
+//}
 
 void loadzombie() {
 	int sum = countfiles("res\\images\\zombies\\zombiecard");
@@ -49,7 +80,7 @@ void loadzombie() {
 			z.hp = 500;
 			z.speed = 1;
 		}
-		else if (i == 4)z.hp = 100;
+		else if (i == 4 || i==0)z.hp = 100;
 		std::string walkpath = "res\\images\\zombies\\zombie (" + std::to_string(i) + ")\\walk";
 		std::string eatpath = "res\\images\\zombies\\zombie (" + std::to_string(i) + ")\\eat";
 		for (int j = 0; j < countfiles(walkpath); ++j) {

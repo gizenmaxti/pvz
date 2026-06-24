@@ -3,28 +3,52 @@
 #include <string>
 #include <vector>
 #include "graphics.h"
+//struct plant {
+//	int currentframe = 0;
+//	std::chrono::steady_clock::time_point lastframe = std::chrono::steady_clock::now();
+//	IMAGE cardimg;
+//	bool isslected = false;
+//	int type;
+//	int hp=100;
+//	std::vector<IMAGE> dance;
+//	//IMAGE bullet;
+//	void dancing(int x,int y,int elp);
+//	int value;
+//	std::vector<IMAGE> bullet;
+//	//void attacking(int x,int y,int t);
+//};
+
 struct plant {
 	int currentframe = 0;
 	std::chrono::steady_clock::time_point lastframe = std::chrono::steady_clock::now();
 	IMAGE cardimg;
 	bool isslected = false;
 	int type;
-	int hp=100;
+	int hp = 100;
 	std::vector<IMAGE> dance;
 	//IMAGE bullet;
-	void dancing(int x,int y,int elp);
+	void dancing(int x, int y, int elp);
 	int value;
+	int damage = 0;
 	std::vector<IMAGE> bullet;
-	void attacking(int x,int y,int t);
+	//void attacking(int x,int y,int t);
 };
 
 struct bullet {
-	float x, y;
-	float speed=10;
-	int damage;
-	bool active;
+	float x=0, y=0;
+	float speed=0;
+	int damage=0;
+	bool active=false;
 	int type;
 	IMAGE img;
+};
+
+struct plantconfig {
+	int hp;
+	int value;
+	int damage;
+	std::vector<IMAGE> dance;
+	std::vector<IMAGE> bullet;
 };
 
 struct grassmap {
@@ -47,6 +71,7 @@ struct grassmap {
 //	std::chrono::steady_clock::time_point birthTime;
 //};
 
+extern std::vector<plantconfig> plantconfigs;
 extern std::vector<bullet> bullets;
 extern plant suns;  
 extern grassmap smap[5][9];

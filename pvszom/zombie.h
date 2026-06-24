@@ -29,10 +29,12 @@ struct zoms {
 	void walking(int color);
 	void eating(int color);
 	void move();
-	void debuffmove();
+	//void debuffmove();
 	int type=0;
 };
 extern std::vector<zoms>allzombie;
 extern std::vector<zombie>typezombie;
 void loadzombie();
-void putzombie(int time);
+//void putzombie(int time);
+void putzombie();
+extern int framecount;
