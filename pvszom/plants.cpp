@@ -91,7 +91,7 @@ std::vector<plantconfig> plantconfigs;
 	 p.damage = damage;
 	 p.isslected = isslected;
 	 p.lastframe = std::chrono::steady_clock::now();
-
+	 
 	 p.cardimg = loadcardpath("res\\images\\cards\\(" + std::to_string(type) + ").png", 63, 88);
 
 	 p.dance = loaddancepath("res\\images\\plants\\plant (" + std::to_string(type) + ")");
@@ -111,10 +111,10 @@ std::vector<plantconfig> plantconfigs;
 			 p=initplant(0, 100, 25, 0, 500, false);
 		 }
 		 else if (i == 1) {
-			 p=initplant(1, 100, 200, 10, 0, false);
+			 p=initplant(1, 100, 200, 0, 10, false);
 		 }
 		 else if (i == 2) {
-			 p=initplant(2, 100, 50, 0, 0, false);
+			 p=initplant(2, 100, 50, 0, 50, false);
 		 }
 		 else if (i == 3) {
 			 p=initplant(3, 100, 50, 0, 0, false);
@@ -123,13 +123,13 @@ std::vector<plantconfig> plantconfigs;
 			 p=initplant(4, 1000, 50, 0, 0, false);
 		 }
 		 else if (i == 5) {
-			 p=initplant(5, 100, 175, 0, 0, false);
+			 p=initplant(5, 100, 175, 0, 10, false);
 		 }
 		 else if (i == 6) {
-			 p=initplant(6, 100, 150, 0, 0, false);
+			 p=initplant(6, 100, 150, 0, 30, false);
 		 }
 		 else if (i == 7) {
-			 p=initplant(7, 100, 100, 0, 0, false);
+			 p=initplant(7, 100, 100, 0, 10, false);
 		 }
 		 plantcards.push_back(p);
 	 }
@@ -137,7 +137,10 @@ std::vector<plantconfig> plantconfigs;
 
 void drawcard() {
 	for (int i = 0; i < 8; ++i) {
-		putimage(250 + i * 70, 5,&plantcards[i].cardimg);
+		if (suncount >= plantcards[i].value) {
+			putimagePNG(250 + i * 70, 5, &plantcards[i].cardimg);
+		}else
+			putimagePNG(250 + i * 70, 5,&plantcards[i].cardimg,100);
 	}
 }
 
@@ -155,8 +158,25 @@ void plant::dancing(int x,int y,int elp=255) {
 void updatebllet() {
 	for(auto it=bullets.begin();it!=bullets.end();) {
 		if(it->active) {
-			putimagePNG(it->x, it->y, &it->img, 255);
-			it->x += it->speed;
+			if(it->type==1||it->type==5||it->type==7) {
+				putimagePNG(it->x, it->y, &it->img, 255);
+				it->x += it->speed;
+			}
+
+			if(it->type==2) {
+				putimagePNG(it->x, it->y, &it->img, 255);
+				if(it->frame>500) {
+					it->active=false;
+				}
+			}
+			if (it->type == 999) {
+				putimagePNG(it->x, it->y, &it->img, 255);
+				if (it->y < it->frame)it->y++;
+			}
+			if ((it->type == 999 || it->type == 2) && isbuttondown && mousey + 20 >= it->y + 50 && mousey - 20 <= it->y + 50 && mousex + 20 >= it->x + 40 && mousex - 20 <= it->x + 40) {
+				it->active = false;
+				suncount += it->damage;
+			}
 			++it;
 		}
 		else {
@@ -192,15 +212,34 @@ bullet addbullet(grassmap p) {
 	b.damage = plantcards[p.type].damage;
 	b.img = plantcards[p.type].bullet[0];
 	b.type = p.type;
-	b.x = p.x * 80 + 200;
-	b.y = p.y * 100 + 90;
+	b.x = p.x * 80 +165 ;
+	b.y = p.y * 100 +100;
+
 	return b;
 }
+
+int rsun = 0;
+void drop_the_sun() {
+	if (framecount % 300 == 0) {
+		bullet dropsun;
+		dropsun.x = rand() % 650 + 160;
+		dropsun.frame = rand() % 500+100;
+		dropsun.y = 100;
+		dropsun.speed = 1;
+		dropsun.type = 999;
+		dropsun.damage = 50;
+		dropsun.img = plantcards[2].bullet[0];
+		dropsun.active = true;
+		bullets.push_back(dropsun);
+	}
+}
+
 
 void updataglass() {
 	for(int i=0;i<5;++i) {
 		for(int j=0;j<9;++j) {
 			if(smap[i][j].hp>0) {
+				if (smap[i][j].type == 2)smap[i][j].isAttacking = true;
 				updapalntdance(smap[i][j]);
 				if (smap[i][j].isAttacking) {
 					//if (smap[i][j].type == 0)plant_potato_attacking(&smap[i][j]);
@@ -209,9 +248,51 @@ void updataglass() {
 						putimagePNG(smap[i][j].x * 80 + 165, smap[i][j].y * 100 + 90, &plantcards[smap[i][j].type].bullet[0], 255);
 					}
 					if (smap[i][j].type == 1) {
-						if(framecount%100==0) {
-							bullets.push_back(addbullet(smap[i][j]));
+						smap[i][j].plframe++;
+						if (smap[i][j].plframe ==96|| smap[i][j].plframe==100) {
+							bullet newbullet = addbullet(smap[i][j]);
+							newbullet.speed = 7;
+							newbullet.x = smap[i][j].x*80+200;
+							newbullet.y = smap[i][j].y*100+ 90;
+							bullets.push_back(newbullet);
 						}
+						if (smap[i][j].plframe >= 100)smap[i][j].plframe = 0;
+					}
+					if (smap[i][j].type == 2) {
+						smap[i][j].plframe++;
+						if (smap[i][j].plframe >= 800 + smap[i][j].ra) {
+							bullet newbullet = addbullet(smap[i][j]);
+							newbullet.x = smap[i][j].x*80+165-20+rand()%70;
+							newbullet.y = smap[i][j].y * 100 + 50 + rand() % 40;
+							bullets.push_back(newbullet);
+							smap[i][j].plframe = 0;
+							smap[i][j].ra = rand() % 500;
+						}
+					}
+					if (smap[i][j].type == 3) {
+						
+					}
+					if (smap[i][j].type == 5) {
+						smap[i][j].plframe++;
+						if (smap[i][j].plframe == 88|| smap[i][j].plframe == 92||smap[i][j].plframe == 96 || smap[i][j].plframe == 100) {
+							bullet newbullet = addbullet(smap[i][j]);
+							newbullet.speed = 7;
+							newbullet.x = smap[i][j].x * 80 + 200;
+							newbullet.y = smap[i][j].y * 100 + 90;
+							bullets.push_back(newbullet);
+						}
+						if (smap[i][j].plframe >= 100)smap[i][j].plframe = 0;
+					}
+					if (smap[i][j].type == 7) {
+						smap[i][j].plframe++;
+						if (smap[i][j].plframe == 100) {
+							bullet newbullet = addbullet(smap[i][j]);
+							newbullet.speed = 7;
+							newbullet.x = smap[i][j].x * 80 + 200;
+							newbullet.y = smap[i][j].y * 100 + 90;
+							bullets.push_back(newbullet);
+						}
+						if (smap[i][j].plframe >= 100)smap[i][j].plframe = 0;
 					}
 				}
 				//if (smap[i][j].type == 2) {
@@ -233,36 +314,36 @@ void updataglass() {
 				//	smap[i][j].plframe++;
 				//}
 
-				//if (smap[i][j].isAttacking && i >= 0 && i < 5 && j >= 0 && j < 9) {
-				//	if (smap[i][j].type==0&&smap[i][j].ti < 10) {
-				//		putimagePNG(smap[i][j].x * 80 + 165, smap[i][j].y * 100 + 90, &plantcards[smap[i][j].type].bullet[0], 255);
-				//		smap[i][j].ti ++;
-				//	}
-				//	else if (smap[i][j].type == 0) {
-				//		smap[i][j].hp = 0;
-				//	}
-				//	bullet b;
-				//	b.x = smap[i][j].x * 80 + 200;
-				//	b.y = smap[i][j].y * 100 + 90;
-				//	b.active = true;
-				//	b.img = plantcards[smap[i][j].type].bullet[0];
-				//	b.damage = 20;
-				//	b.speed = 10;
-				//	b.type = smap[i][j].type;
-				//	if (smap[i][j].type == 1) {
-				//		if(framecount%100==0) {
-				//			bullets.push_back(b);
-				//		}
-				//		if (framecount % 101 == 0) {
-				//			bullets.push_back(b);
-				//		}
-				//	}
-				//	if (smap[i][j].type == 5 || smap[i][j].type == 7) {
-				//		if (framecount % 100 == 0) {
-				//			bullets.push_back(b);
-				//		}
-				//	}
-				//}
+				/*if (smap[i][j].isAttacking && i >= 0 && i < 5 && j >= 0 && j < 9) {
+					if (smap[i][j].type==0&&smap[i][j].ti < 10) {
+						putimagePNG(smap[i][j].x * 80 + 165, smap[i][j].y * 100 + 90, &plantcards[smap[i][j].type].bullet[0], 255);
+						smap[i][j].ti ++;
+					}
+					else if (smap[i][j].type == 0) {
+						smap[i][j].hp = 0;
+					}
+					bullet b;
+					b.x = smap[i][j].x * 80 + 200;
+					b.y = smap[i][j].y * 100 + 90;
+					b.active = true;
+					b.img = plantcards[smap[i][j].type].bullet[0];
+					b.damage = 20;
+					b.speed = 10;
+					b.type = smap[i][j].type;
+					if (smap[i][j].type == 1) {
+						if(framecount%100==0) {
+							bullets.push_back(b);
+						}
+						if (framecount % 101 == 0) {
+							bullets.push_back(b);
+						}
+					}
+					if (smap[i][j].type == 5 || smap[i][j].type == 7) {
+						if (framecount % 100 == 0) {
+							bullets.push_back(b);
+						}
+					}
+				}*/
 			}
 		}
 	}

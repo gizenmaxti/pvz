@@ -7,8 +7,10 @@
 
 std::vector<zoms> allzombie;
 std::vector<zombie>typezombie;
-
+int zombiecnt = 0;
 int nowframe = 0;
+
+int zn=20;
 void putzombie() {
 	if (framecount < 60)return;
 	zoms z;
@@ -17,9 +19,8 @@ void putzombie() {
 		z.type = 4;
 		putz = true;
 	}
-	if(framecount>200&&framecount-nowframe-rand()%1000>100) {
+	if(framecount>500&&framecount-nowframe-300-rand()%300>100) {
 		int type = rand() % 100;
-		std::cout << "type: " << type << std::endl;
 		if (type >= 0 && type < 60)z.type = 0;
 		else if (type >= 60 && type < 85)z.type = 2;
 		else if (type >= 85 && type < 97)z.type = 1;
@@ -28,7 +29,6 @@ void putzombie() {
 		nowframe = framecount;
 	}
 	if (putz) {
-		std::cout << "z.type: " << z.type << std::endl;
 		z.hp = typezombie[z.type].hp;
 		z.isEating = false;
 		z.row = rand() % 5;

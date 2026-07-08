@@ -38,3 +38,4 @@ void loadzombie();
 //void putzombie(int time);
 void putzombie();
 extern int framecount;
+//extern bool zn;
