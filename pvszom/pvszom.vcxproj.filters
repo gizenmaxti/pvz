@@ -45,6 +45,9 @@
     <ClCompile Include="adventure.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="plants.h">
@@ -63,6 +66,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="adventure.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

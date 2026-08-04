@@ -1,13 +1,39 @@
 #pragma once
 #include "game.h"
 #include "scene.h"
-//extern void loadgame_begin_image();
-//extern void update_gamebegin();
+#include "Button.h"
 
-struct button {
-	int x, y, width, height;
-	IMAGE img, select_img;
+class menubutton :public Button{
+public:
+	menubutton(int x, int y, int w, int h, const std::string &imgpath, const std::string& hoverpath, std::function<std::unique_ptr<scene>()>factory) :
+		Button(x, y, w, h,imgpath,hoverpath), target(std::move(factory)){
+
+	}
+
+	void onClick(bool clicked) override {
+		if (clicked) {
+			clicked = false;
+			sceneManager.changeScene(Action::push, target());
+		}
+	}
+	bool ishover(int mousex, int mousey) const {
+		return mousex >= getx() && mousex < getx() + getw() && mousey >= gety()+40 && mousey < gety()-20 + geth();
+	}
+
+	void hover(bool hovered) override {
+		if (hovered) {
+			putimagePNG(getx(), gety(), &gethover());
+			onClick(clicked);
+		}
+		else {
+			putimagePNG(getx(), gety(), &getimg() );
+		}
+	}
+	
+private:
+	std::function<std::unique_ptr<scene>()>target = nullptr;
 };
+
 
 class MenuScene : public scene {
 public:
@@ -17,8 +43,7 @@ public:
 	}
 private:
 	IMAGE menu_begin;
-	static const int button_count = 4;
-	button buttons[button_count];
-	bool select_button(int x, int y, button b);
+	
+	std::vector<menubutton>buttons;
 	void draw_button();
 };

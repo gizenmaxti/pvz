@@ -1,8 +1,14 @@
 #include "game.h"
 #include "menu.h"
+#include "adventure.h"
+#include "SceneManager.h"
+
 
 int msgx, msgy;
 bool clicked;
+
+SceneManager sceneManager;
+
 void userclick() {
 	ExMessage msg;
 	while (peekmessage(&msg)) {
@@ -15,13 +21,16 @@ void userclick() {
 	}
 }
 
-void gameloop() {
-	MenuScene menu;
-	menu.load();
+void adventure_loop() {
+	adventure_Scene adventure;
+	adventure.load();
 	while (1) {
-		clicked = false;
-		userclick();
-		menu.update();
-		Sleep(16);
+		adventure.update();
 	}
 }
+
+void gameloop() {
+
+	sceneManager.sceneLoop();
+}
+
