@@ -3,6 +3,8 @@
 #include "menu.h"
 #include "adventure.h"
 #include "SceneManager.h"
+#include "adventure_game.h"
+#define scenebegin adventure_game_Scene
 
 void SceneManager::changeScene(Action action=Action::pop, std::unique_ptr<scene>cur =nullptr) {
 	if (action != Action::pop && (cur == nullptr || cur.get() == nullptr)) {
@@ -30,7 +32,8 @@ void SceneManager::changeScene(Action action=Action::pop, std::unique_ptr<scene>
 
 void SceneManager::initmainscene() {
 	mainscene = std::stack<std::unique_ptr<scene>>();
-	changeScene(Action::push, std::make_unique<MenuScene>());
+	//changeScene(Action::push, std::make_unique<MenuScene>());
+	changeScene(Action::push, std::make_unique<scenebegin>());
 }
 
 void SceneManager::sceneLoop() {

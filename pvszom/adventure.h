@@ -1,6 +1,12 @@
 #pragma once
+#include <easyx.h>
+#include <memory>
+#include <vector>
+#include <string>
+#include <functional>
 #include "scene.h"
-#include "easyx.h"
+#include "Button.h"
+#include "tool.h"
 #define COUNT_LEVEL 15
 
 struct level {
@@ -11,7 +17,7 @@ struct level {
 	IMAGE img;
 };
 
-//class adventure_button :public Button {
+class adventure_button :public Button {
 //public:
 //	adventure_button(int x, int y, int w, int h, const std::string& imgpath, const std::string& hoverpath, std::function<std::unique_ptr<scene>()>factory) :
 //		Button(x, y, w, h, imgpath, hoverpath), target(std::move(factory)) {
@@ -36,7 +42,7 @@ struct level {
 //	}
 //private:
 //	std::function<std::unique_ptr<scene>()>target = nullptr;
-//};
+};
 
 class adventure_Scene : public scene {
 public:

@@ -17,15 +17,6 @@ void userclick() {
 		if(msg.message == WM_LBUTTONDOWN) {
 			clicked = true;
 		}
-		
-	}
-}
-
-void adventure_loop() {
-	adventure_Scene adventure;
-	adventure.load();
-	while (1) {
-		adventure.update();
 	}
 }
 

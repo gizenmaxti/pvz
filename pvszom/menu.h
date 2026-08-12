@@ -1,7 +1,12 @@
 #pragma once
-#include "game.h"
+#include <easyx.h>
+#include <memory>
+#include <vector>
+#include <string>
+#include <functional>
 #include "scene.h"
 #include "Button.h"
+#include "tool.h"
 
 class menubutton :public Button{
 public:
@@ -10,25 +15,12 @@ public:
 
 	}
 
-	void onClick(bool clicked) override {
-		if (clicked) {
-			clicked = false;
-			sceneManager.changeScene(Action::push, target());
-		}
-	}
+	void onClick(bool clicked) override;
 	bool ishover(int mousex, int mousey) const {
 		return mousex >= getx() && mousex < getx() + getw() && mousey >= gety()+40 && mousey < gety()-20 + geth();
 	}
 
-	void hover(bool hovered) override {
-		if (hovered) {
-			putimagePNG(getx(), gety(), &gethover());
-			onClick(clicked);
-		}
-		else {
-			putimagePNG(getx(), gety(), &getimg() );
-		}
-	}
+	void hover(bool hovered) override;
 	
 private:
 	std::function<std::unique_ptr<scene>()>target = nullptr;

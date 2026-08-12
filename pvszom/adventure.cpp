@@ -31,3 +31,4 @@ void adventure_Scene::update() {
 	FlushBatchDraw();
 	EndBatchDraw();
 }
+

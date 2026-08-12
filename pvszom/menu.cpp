@@ -1,6 +1,24 @@
 #include"menu.h"
 #include"adventure.h"
+#include"SceneManager.h"
+#include"game.h"
 
+void menubutton::onClick(bool clicked) {
+	if (clicked) {
+		clicked = false;
+		sceneManager.changeScene(Action::push, target());
+	}
+}
+
+void menubutton::hover(bool hovered) {
+	if (hovered) {
+		putimagePNG(getx(), gety(), &gethover());
+		onClick(clicked);
+	}
+	else {
+		putimagePNG(getx(), gety(), &getimg());
+	}
+}
 
 void MenuScene::load() {
 	loadimage(&menu_begin, "res\\images\\menu\\menu_begin.jpg", WIN_WIDTH, WIN_HEIGHT);

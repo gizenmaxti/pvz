@@ -1,5 +1,5 @@
 #pragma once
-#include "easyx.h"
+#include <easyx.h>
 class Button {
 public:
 	Button(int x, int y, int w, int h, const std::string& imgpath, const std::string& hoverpath) :

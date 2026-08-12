@@ -5,8 +5,8 @@
 #include<chrono>
 #include<easyx.h>
 #include "tool.h"
-#include "zombie.h"
-#include "plants.h"
+//#include "zombie.h"
+//#include "plants.h"
 #include"SceneManager.h"
 class MenuScene;
 class adventure_Scene;
