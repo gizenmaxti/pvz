@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="adventure_game.h" />
+    <ClInclude Include="attack.h" />
+    <ClInclude Include="Card.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="plant.h" />
     <ClInclude Include="plants.h" />
@@ -32,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="adventure_game.cpp" />
+    <ClCompile Include="Card.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />

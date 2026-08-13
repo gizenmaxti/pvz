@@ -51,6 +51,9 @@
     <ClCompile Include="tool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Card.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="plants.h">
@@ -81,6 +84,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="adventure_game.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="attack.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Card.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
