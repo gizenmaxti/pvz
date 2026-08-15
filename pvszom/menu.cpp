@@ -2,6 +2,7 @@
 #include"adventure.h"
 #include"SceneManager.h"
 #include"game.h"
+#include"input.h"
 
 void menubutton::onClick(bool clicked) {
 	if (clicked) {

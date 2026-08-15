@@ -1,5 +1,5 @@
 #include <stdexcept>
-#include "game.h"
+#include"input.h"
 #include "menu.h"
 #include "adventure.h"
 #include "SceneManager.h"

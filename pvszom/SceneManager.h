@@ -22,6 +22,7 @@ enum class Action {
 
 class SceneManager {
 public:	
+
 	void sceneLoop();
 	void changeScene(Action action, const std::unique_ptr<scene>cur);
 private:

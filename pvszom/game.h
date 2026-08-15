@@ -16,8 +16,8 @@ class adventure_Scene;
 extern void gameloop();
 extern void userclick();
 
-extern int msgx, msgy;
-extern bool clicked;
+//extern int msgx, msgy;
+//extern bool clicked;
 
 extern SceneManager sceneManager;
 

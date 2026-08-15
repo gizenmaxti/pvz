@@ -23,8 +23,12 @@
     <ClInclude Include="attack.h" />
     <ClInclude Include="Card.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="input.h" />
     <ClInclude Include="plant.h" />
+    <ClInclude Include="plantinfo.h" />
     <ClInclude Include="plants.h" />
+    <ClInclude Include="plant_registry.h" />
+    <ClInclude Include="plant_type.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="tool.h" />
     <ClInclude Include="zombie.h" />
@@ -36,11 +40,14 @@
     <ClCompile Include="adventure_game.cpp" />
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="menu.h" />
     <ClCompile Include="adventure.cpp" />
+    <ClCompile Include="plantinfo.cpp" />
     <ClCompile Include="plants.cpp" />
+    <ClCompile Include="plant_registry.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="tool.cpp" />
     <ClCompile Include="zombie.cpp" />
