@@ -1,5 +1,5 @@
 #include"input.h"
-int msgx, msgy;
+float msgx, msgy;
 bool clicked = false;
 void userclick() {
 	ExMessage msg;

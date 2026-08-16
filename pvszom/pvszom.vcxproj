@@ -22,13 +22,13 @@
     <ClInclude Include="adventure_game.h" />
     <ClInclude Include="attack.h" />
     <ClInclude Include="Card.h" />
+    <ClInclude Include="commodity.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="plant.h" />
     <ClInclude Include="plantinfo.h" />
     <ClInclude Include="plants.h" />
     <ClInclude Include="plant_registry.h" />
-    <ClInclude Include="plant_type.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="tool.h" />
     <ClInclude Include="zombie.h" />

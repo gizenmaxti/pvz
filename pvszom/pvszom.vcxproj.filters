@@ -101,9 +101,6 @@
     <ClInclude Include="Card.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="plant_type.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="plant_registry.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -111,6 +108,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="input.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="commodity.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

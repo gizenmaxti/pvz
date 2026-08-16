@@ -1,9 +1,11 @@
 #include <easyx.h>
 #include "adventure_game.h"
 #include "Card.h"
+#include "plant_registry.h"
 std::vector<Card> cards;
+
 void cardload() {
-	cards.clear();
+	/*cards.clear();
 	for(int i=0,x=250;i<8;++i,x+=70) {
 		cards.emplace_back(50, x, 5, "res\\images\\cards\\(" + std::to_string(i) + ").png", 63, 88);
 	}
@@ -14,12 +16,14 @@ void cardload() {
 	cards[4].value = 50;
 	cards[5].value = 175;
 	cards[6].value = 150;
-	cards[7].value = 100;
+	cards[7].value = 100;*/
+	plant_registry::instance().load();
 }
 void cardupdate() {
-	for (int i = 0; i < 8; ++i) {
+	/*for (int i = 0; i < 8; ++i) {
 		putimage(cards[i].x, cards[i].y, &cards[i].img);
-	}
+	}*/
+	plant_registry::instance().update();
 }
 
 
