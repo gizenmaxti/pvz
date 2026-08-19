@@ -22,7 +22,8 @@
     <ClInclude Include="adventure_game.h" />
     <ClInclude Include="attack.h" />
     <ClInclude Include="Card.h" />
-    <ClInclude Include="commodity.h" />
+    <ClInclude Include="plant_pool.h" />
+    <ClInclude Include="shop.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="plant.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="adventure.cpp" />
     <ClCompile Include="plantinfo.cpp" />
     <ClCompile Include="plants.cpp" />
+    <ClCompile Include="plant_pool.cpp" />
     <ClCompile Include="plant_registry.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="tool.cpp" />

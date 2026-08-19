@@ -20,9 +20,7 @@ struct plantinfo {
 		loadimage(&cardimg, cardpath.c_str(),w,h);
 		loadimage(&plantimg, plantpath.c_str(),w,h);
 	};
-	void hittest() {
-		if (x <= msgx && msgx <= x + w && y<=msgy && msgy<=y + h && clicked)isSelected = true;
-	};
+	//void hittest(Planttype type);
 	int inithp;
 	int value;
 	int cooldown;
@@ -30,8 +28,8 @@ struct plantinfo {
 	IMAGE cardimg;
 	IMAGE plantimg;
 	std::string name;
-	float x, y;
-	bool isSelected = false;
+	//float x, y;
+	//bool isSelected = false;
 
 };
 

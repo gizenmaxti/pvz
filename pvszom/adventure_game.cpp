@@ -1,8 +1,10 @@
 #include <easyx.h>
 #include "adventure_game.h"
 #include "Card.h"
+#include"plant_pool.h"
 #include "plant_registry.h"
 std::vector<Card> cards;
+plant_pool pool;
 
 void cardload() {
 	/*cards.clear();
@@ -19,11 +21,8 @@ void cardload() {
 	cards[7].value = 100;*/
 	plant_registry::instance().load();
 }
-void cardupdate() {
-	/*for (int i = 0; i < 8; ++i) {
-		putimage(cards[i].x, cards[i].y, &cards[i].img);
-	}*/
-	plant_registry::instance().update();
+void pooladd() {
+	pool.add_plant(plant_card(Planttype::peashooter));
 }
 
 
@@ -37,7 +36,7 @@ void adventure_game_Scene::update() {
 	BeginBatchDraw();
 	putimage(0, 0, &background);
 	putimage(160, 0, &shop);
-	cardupdate();
+	pool.update();
 	FlushBatchDraw();
 	EndBatchDraw();
 }
