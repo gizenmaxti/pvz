@@ -12,9 +12,10 @@ void menubutton::onClick(bool clicked) {
 }
 
 void menubutton::hover(bool hovered) {
+
 	if (hovered) {
 		putimagePNG(getx(), gety(), &gethover());
-		onClick(clicked);
+		onClick(input::instance().isclicked());
 	}
 	else {
 		putimagePNG(getx(), gety(), &getimg());
@@ -33,7 +34,7 @@ void MenuScene::load() {
 
 void MenuScene::draw_button() {
 	for (int i = 0; i < buttons.size(); ++i) {
-		buttons[i].hover(buttons[i].ishover(msgx, msgy));
+		buttons[i].hover(buttons[i].ishover(input::instance().getx(), input::instance().gety()));
 	}
 }
 

@@ -1,7 +1,6 @@
 #pragma once
 #include <easyx.h>
 #include<string>
-#include"input.h"
 
 enum class Planttype {
 	sunflower,

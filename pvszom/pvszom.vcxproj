@@ -22,6 +22,7 @@
     <ClInclude Include="adventure_game.h" />
     <ClInclude Include="attack.h" />
     <ClInclude Include="Card.h" />
+    <ClInclude Include="level.h" />
     <ClInclude Include="plant_pool.h" />
     <ClInclude Include="shop.h" />
     <ClInclude Include="game.h" />

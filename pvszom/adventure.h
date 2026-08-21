@@ -7,15 +7,9 @@
 #include "scene.h"
 #include "Button.h"
 #include "tool.h"
-#define COUNT_LEVEL 15
+#include"level.h"
 
-struct level {
-	int sun;
-	int zombiecount;
-	int time;
-	int id;
-	IMAGE img;
-};
+#define COUNT_LEVEL 15
 
 class adventure_button :public Button {
 //public:
@@ -54,4 +48,5 @@ private:
 	void draw_level();
 	IMAGE background, background2, return_button;
 	level levels[COUNT_LEVEL];
+	std::vector<level> level_list;
 };

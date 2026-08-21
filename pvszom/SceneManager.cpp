@@ -1,10 +1,11 @@
 #include <stdexcept>
-#include"input.h"
 #include "menu.h"
 #include "adventure.h"
 #include "SceneManager.h"
 #include "adventure_game.h"
+#include "input.h"
 #define scenebegin adventure_game_Scene
+//#define scenebegin MenuScene
 
 void SceneManager::changeScene(Action action=Action::pop, std::unique_ptr<scene>cur =nullptr) {
 	if (action != Action::pop && (cur == nullptr || cur.get() == nullptr)) {
@@ -40,8 +41,9 @@ void SceneManager::sceneLoop() {
 	initmainscene();
 	while (1) {
 		try {
-			clicked = false;
-			userclick();
+			input::instance().userclick();
+			/*clicked = false;
+			userclick();*/
 			if (!mainscene.empty()) {
 				mainscene.top()->update();
 			}

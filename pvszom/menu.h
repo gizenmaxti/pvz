@@ -14,8 +14,8 @@ public:
 		Button(x, y, w, h,imgpath,hoverpath), target(std::move(factory)){
 
 	}
+	void onClick(bool clicked);
 
-	void onClick(bool clicked) override;
 	bool ishover(int mousex, int mousey) const {
 		return mousex >= getx() && mousex < getx() + getw() && mousey >= gety()+40 && mousey < gety()-20 + geth();
 	}
