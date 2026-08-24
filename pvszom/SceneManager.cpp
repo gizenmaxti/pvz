@@ -3,6 +3,8 @@
 #include "adventure.h"
 #include "SceneManager.h"
 #include "adventure_game.h"
+#include"plant_registry.h"
+#include"level_registry.h"
 #include "input.h"
 //#define scenebegin adventure_game_Scene
 #define scenebegin MenuScene
@@ -31,7 +33,14 @@ void SceneManager::changeScene(Action action=Action::pop, std::unique_ptr<scene>
 	}
 }
 
+//void load() {
+//	level_registry::instance().load();
+//	plant_registry::instance().load();
+//}
+
+
 void SceneManager::initmainscene() {
+	//load();
 	mainscene = std::stack<std::unique_ptr<scene>>();
 	//changeScene(Action::push, std::make_unique<MenuScene>());
 	changeScene(Action::push, std::make_unique<scenebegin>());

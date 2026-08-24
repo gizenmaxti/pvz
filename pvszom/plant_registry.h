@@ -7,8 +7,10 @@ public:
 		static plant_registry instance;
 		return instance;
 	}
+	void putconfig(Planttype t, plantinfo p) {
+		plant_infos.emplace(t, p);
+	}
 	void load();
-	void update();
 	const plantinfo& get_plant_info(Planttype type) const {
 		return plant_infos.at(type);
 	}

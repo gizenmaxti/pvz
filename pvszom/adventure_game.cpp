@@ -19,7 +19,6 @@ void poolload() {
 	
 }
 
-
 void adventure_game_Scene::load() {
 	loadimage(&background, "res\\images\\adventure_game\\bg_3.png");
 	loadimage(&shop, "res\\images\\adventure_game\\wd.jpg", 650, 100);
@@ -31,7 +30,7 @@ void adventure_game_Scene::update() {
 	BeginBatchDraw();
 	putimage(0, 0, &background);
 	putimage(160, 0, &shop);
-	pool.update();
+	//pool.update();
 	FlushBatchDraw();
 	EndBatchDraw();
 }

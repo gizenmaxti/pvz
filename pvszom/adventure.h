@@ -7,9 +7,8 @@
 #include "scene.h"
 #include "Button.h"
 #include "tool.h"
-#include"level.h"
+#include"level_registry.h"
 
-//#define COUNT_LEVEL 15
 
 class adventure_button :public Button {
 //public:

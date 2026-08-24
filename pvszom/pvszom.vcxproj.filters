@@ -54,9 +54,6 @@
     <ClCompile Include="Card.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="plant_registry.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="input.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -66,7 +63,10 @@
     <ClCompile Include="plant_pool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="level.cpp">
+    <ClCompile Include="level_registry.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="config.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,10 +122,10 @@
     <ClInclude Include="plant_pool.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="level.h">
+    <ClInclude Include="levelinfo.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="levelinfo.h">
+    <ClInclude Include="level_registry.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
