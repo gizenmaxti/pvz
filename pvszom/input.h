@@ -24,6 +24,9 @@ public:
 	}
 	void userclick();
 private:
+	input() = default;
+	input(const input&) = delete;
+	input& operator=(const input&) = delete;
 	int x, y;
 	bool clicked = false,dragging;
 };

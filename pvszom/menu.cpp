@@ -7,7 +7,7 @@
 void menubutton::onClick(bool clicked) {
 	if (clicked) {
 		clicked = false;
-		sceneManager.changeScene(Action::push, target());
+		SceneManager::instance().changeScene(Action::push, target());
 	}
 }
 

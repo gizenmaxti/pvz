@@ -13,11 +13,7 @@ public:
 		return plant_infos.at(type);
 	}
 private:
-	//void register_plant(Planttype type, plantinfo p) {
-	//	plant_infos.emplace(type, std::move(p));
-	//	//plant_types.push_back(type);
-	//}
+
 	std::unordered_map<Planttype, plantinfo> plant_infos;
-	//std::vector<Planttype> plant_types;
 };
 

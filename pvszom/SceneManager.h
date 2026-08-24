@@ -21,14 +21,21 @@ enum class Action {
 };
 
 class SceneManager {
-public:	
-
+public:
+	static SceneManager& instance() {
+		static SceneManager instance;
+		return instance;
+	}
 	void sceneLoop();
-	void changeScene(Action action, const std::unique_ptr<scene>cur);
+	void changeScene(Action action, const std::unique_ptr<scene>cur=nullptr);
 private:
+	SceneManager() = default;
+	SceneManager(const SceneManager&) = delete;
+	SceneManager& operator=(const SceneManager&) = delete;
+
 	void initmainscene();
 
 	std::stack<std::unique_ptr<scene>>mainscene;
-	
+
 	scene* currentScene = nullptr;
 };

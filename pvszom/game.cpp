@@ -7,7 +7,7 @@
 //int msgx, msgy;
 //bool clicked;
 
-SceneManager sceneManager;
+//SceneManager sceneManager;
 
 //void userclick() {
 //	ExMessage msg;
@@ -22,6 +22,6 @@ SceneManager sceneManager;
 
 void gameloop() {
 
-	sceneManager.sceneLoop();
+	SceneManager::instance().sceneLoop();
 }
 

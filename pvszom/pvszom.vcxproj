@@ -23,6 +23,7 @@
     <ClInclude Include="attack.h" />
     <ClInclude Include="Card.h" />
     <ClInclude Include="level.h" />
+    <ClInclude Include="levelinfo.h" />
     <ClInclude Include="plant_pool.h" />
     <ClInclude Include="shop.h" />
     <ClInclude Include="game.h" />
@@ -43,6 +44,7 @@
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="menu.h" />

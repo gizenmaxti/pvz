@@ -9,7 +9,7 @@
 #include "tool.h"
 #include"level.h"
 
-#define COUNT_LEVEL 15
+//#define COUNT_LEVEL 15
 
 class adventure_button :public Button {
 //public:
@@ -44,9 +44,14 @@ public:
 	void update() override;
 	void unload() override {
 	}
+	void addlevel(const level& l) {
+		level_list.push_back(l);
+	}
+	
 private:
 	void draw_level();
-	IMAGE background, background2, return_button;
-	level levels[COUNT_LEVEL];
+	IMAGE background, background2;
+	IMAGE return_button, return_bbutton;
+	void returnbutton();
 	std::vector<level> level_list;
 };
