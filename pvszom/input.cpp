@@ -1,8 +1,8 @@
 #include"input.h"
 void input::userclick() {
+	clicked = false;
 	ExMessage msg;
 	while (peekmessage(&msg)) {
-		clicked = false;
 		x = msg.x;
 		y = msg.y;
 		if (msg.message == WM_LBUTTONDOWN) {

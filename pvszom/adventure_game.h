@@ -9,14 +9,13 @@ public:
 	void unload() override {
 	}
 	void poolrendering();
-
-	void getlevel(level l) {
+	void shoprendering();
+	void setlevel(level l) {
 		curlevel = l;
 	}
-
 private:
-	const levelinfo& levelconfig = level_registry::instance().get_levelinfo(curlevel);
-	const plant_pool& pool = levelconfig.pool;
+	levelinfo levelconfig;
+	plant_pool pool;
 	std::vector<Planttype>product;
 	level curlevel;
 	IMAGE background,shop,poolimg;

@@ -27,6 +27,8 @@ void adventure_Scene::returnbutton() {
 
 void adventure_Scene::draw_level() {
 	int y = 120, row = 0;
+	
+
 	for (auto k: level_registry::instance().getlevels()) {
 		int i = 0;
 		int x = 45 + row * 170;
@@ -36,7 +38,7 @@ void adventure_Scene::draw_level() {
 			putimage(x - 10, y - 10, &level_registry::instance().get_levelinfo(k).hoverimg);
 			if (input::instance().isclicked()) {
 				auto gamescene = std::make_unique<adventure_game_Scene>();
-				gamescene->getlevel(k);
+				gamescene->setlevel(k);
 				SceneManager::instance().changeScene(Action::push, std::move(gamescene));
 			}
 		}

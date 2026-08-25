@@ -6,7 +6,7 @@
 #include"plant_registry.h"
 #include"level_registry.h"
 #include "input.h"
-#define scenebegin adventure_game_Scene
+//#define scenebegin adventure_game_Scene
 //#define scenebegin MenuScene
 
 void SceneManager::changeScene(Action action=Action::pop, std::unique_ptr<scene>cur) {
@@ -33,19 +33,19 @@ void SceneManager::changeScene(Action action=Action::pop, std::unique_ptr<scene>
 	}
 }
 
-//void load() {
-//	level_registry::instance().load();
-//	plant_registry::instance().load();
-//}
-
 
 void SceneManager::initmainscene() {
+	mainscene = std::stack<std::unique_ptr<scene>>();
+
 	plant_registry::instance().load();
 	level_registry::instance().load();
-	//load();
-	mainscene = std::stack<std::unique_ptr<scene>>();
+
+	auto gamescene = std::make_unique<adventure_game_Scene>();
+	gamescene->setlevel(level::level_2);
+	changeScene(Action::push, std::move(gamescene));
+
 	//changeScene(Action::push, std::make_unique<MenuScene>());
-	changeScene(Action::push, std::make_unique<scenebegin>());
+	//changeScene(Action::push, std::make_unique<scenebegin>());
 }
 
 void SceneManager::sceneLoop() {

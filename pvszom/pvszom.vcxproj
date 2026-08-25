@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClInclude Include="adventure_game.h" />
     <ClInclude Include="attack.h" />
-    <ClInclude Include="Card.h" />
     <ClInclude Include="levelinfo.h" />
     <ClInclude Include="level_registry.h" />
     <ClInclude Include="plant_pool.h" />

@@ -92,9 +92,6 @@
     <ClInclude Include="attack.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Card.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="plant_registry.h">
       <Filter>头文件</Filter>
     </ClInclude>
