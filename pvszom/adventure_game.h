@@ -8,12 +8,16 @@ public:
 	void update() override;
 	void unload() override {
 	}
+	void poolrendering();
+
 	void getlevel(level l) {
 		curlevel = l;
 	}
+
 private:
 	const levelinfo& levelconfig = level_registry::instance().get_levelinfo(curlevel);
 	const plant_pool& pool = levelconfig.pool;
+	std::vector<Planttype>product;
 	level curlevel;
-	IMAGE background,shop;
+	IMAGE background,shop,poolimg;
 };

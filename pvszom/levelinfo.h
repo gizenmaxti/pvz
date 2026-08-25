@@ -9,6 +9,6 @@ enum class level {
 struct levelinfo {
 	int id;
 	IMAGE img, hoverimg;
-	int w=80, h=100, ww=100, hh=120;
+	int w=120, h=120, ww=140, hh=140;
 	plant_pool pool;
 };

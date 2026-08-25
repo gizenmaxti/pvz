@@ -51,19 +51,7 @@
     <ClCompile Include="tool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Card.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="input.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="plantinfo.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="plant_pool.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="level_registry.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="config.cpp">

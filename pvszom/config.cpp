@@ -3,11 +3,31 @@
 #include"levelinfo.h"
 #include"plantinfo.h"
 
+//levelinfo level_1() {
+//	levelinfo l;
+//	l.id = 1;
+//	l.pool.add_plant(plant_card(Planttype::peashooter));
+//	l.pool.add_plant(plant_card(Planttype::sunflower));
+//	loadimage(&l.img, "res\\images\\menuselect\\level\\level (1).jpg", l.w, l.h);
+//	loadimage(&l.hoverimg, "res\\images\\menuselect\\level\\level (1).jpg", l.ww, l.hh);
+//	return l;
+//}
+
+//levelinfo level_2() {
+//	levelinfo l;
+//	l.id = 2;
+//	l.pool.add_plant(plant_card(Planttype::peashooter));
+//	l.pool.add_plant(plant_card(Planttype::sunflower));
+//	l.pool.add_plant(plant_card(Planttype::cherry));
+//	loadimage(&l.img, "res\\images\\menuselect\\level\\level (2).jpg", l.w, l.h);
+//	loadimage(&l.hoverimg, "res\\images\\menuselect\\level\\level (2).jpg", l.ww, l.hh);
+//	return l;
+//}
 levelinfo level_1() {
 	levelinfo l;
 	l.id = 1;
-	l.pool.add_plant(plant_card(Planttype::peashooter));
-	l.pool.add_plant(plant_card(Planttype::sunflower));
+	l.pool.add_plant(Planttype::peashooter);
+	l.pool.add_plant(Planttype::sunflower);
 	loadimage(&l.img, "res\\images\\menuselect\\level\\level (1).jpg", l.w, l.h);
 	loadimage(&l.hoverimg, "res\\images\\menuselect\\level\\level (1).jpg", l.ww, l.hh);
 	return l;
@@ -16,9 +36,9 @@ levelinfo level_1() {
 levelinfo level_2() {
 	levelinfo l;
 	l.id = 2;
-	l.pool.add_plant(plant_card(Planttype::peashooter));
-	l.pool.add_plant(plant_card(Planttype::sunflower));
-	l.pool.add_plant(plant_card(Planttype::cherry));
+	l.pool.add_plant(Planttype::peashooter);
+	l.pool.add_plant(Planttype::sunflower);
+	l.pool.add_plant(Planttype::cherry);
 	loadimage(&l.img, "res\\images\\menuselect\\level\\level (2).jpg", l.w, l.h);
 	loadimage(&l.hoverimg, "res\\images\\menuselect\\level\\level (2).jpg", l.ww, l.hh);
 	return l;

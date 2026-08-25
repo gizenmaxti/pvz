@@ -6,8 +6,8 @@
 #include"plant_registry.h"
 #include"level_registry.h"
 #include "input.h"
-//#define scenebegin adventure_game_Scene
-#define scenebegin MenuScene
+#define scenebegin adventure_game_Scene
+//#define scenebegin MenuScene
 
 void SceneManager::changeScene(Action action=Action::pop, std::unique_ptr<scene>cur) {
 	if (action != Action::pop && (cur == nullptr || cur.get() == nullptr)) {
@@ -40,6 +40,8 @@ void SceneManager::changeScene(Action action=Action::pop, std::unique_ptr<scene>
 
 
 void SceneManager::initmainscene() {
+	plant_registry::instance().load();
+	level_registry::instance().load();
 	//load();
 	mainscene = std::stack<std::unique_ptr<scene>>();
 	//changeScene(Action::push, std::make_unique<MenuScene>());

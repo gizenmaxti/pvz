@@ -41,18 +41,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="adventure_game.cpp" />
-    <ClCompile Include="Card.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="input.cpp" />
-    <ClCompile Include="level_registry.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="menu.h" />
     <ClCompile Include="adventure.cpp" />
-    <ClCompile Include="plantinfo.cpp" />
     <ClCompile Include="plants.cpp" />
-    <ClCompile Include="plant_pool.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="tool.cpp" />
     <ClCompile Include="zombie.cpp" />
