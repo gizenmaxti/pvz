@@ -1,18 +1,23 @@
 #pragma once
 #include"plant_registry.h"
+struct poolinfo {
+	Planttype t;
+	bool optional;
+};
 
 class plant_pool {
 public:
 	void add_plant(Planttype t) {
-		plantpool.push_back(t);
+		poolinfo p;
+		p.optional = true;
+		p.t = t;
+		plantpool.push_back(p);
 	}
-	//void delete_plant(Planttype t) {
-	//	//plantpool.ear
-	//}
-	const std::vector<Planttype>&getplanttype()const {
+	std::vector<poolinfo>& getplanttype() {
 		return plantpool;
 	}
 	void update();
 private:
-	std::vector<Planttype> plantpool;
+	//std::vector<Planttype> plantpool;
+	std::vector<poolinfo> plantpool;
 };

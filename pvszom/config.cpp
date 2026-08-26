@@ -2,6 +2,7 @@
 #include"plant_registry.h"
 #include"levelinfo.h"
 #include"plantinfo.h"
+#include"UIconfig.h"
 
 levelinfo level_1() {
 	levelinfo l;
@@ -43,7 +44,7 @@ void level_registry::load() {
 }
 
 void plant_registry::load() {
-	int w=63, h=88;
+	int w=63*0.9, h=88*0.9;
 	plant_registry::putconfig(Planttype::peashooter, plantinfo(100, 100, 5, "Peashooter", "res\\images\\cards\\peashooter.png", "res\\images\\plants\\peashooter\\0.png", w, h));
 	plant_registry::putconfig(Planttype::sunflower, plantinfo(100, 50, 5, "Sunflower", "res\\images\\cards\\sunflower.png", "res\\images\\plants\\sunflower\\0.png", w, h));
 	plant_registry::putconfig(Planttype::cherry, plantinfo(100, 150, 5, "Cherry", "res\\images\\cards\\cherry.png", "res\\images\\plants\\cherry\\0.png", w, h));
@@ -52,4 +53,8 @@ void plant_registry::load() {
 	plant_registry::putconfig(Planttype::treestump, plantinfo(100, 175, 5, "Treestump", "res\\images\\cards\\treestump.png", "res\\images\\plants\\treestump\\0.png", w, h));
 	plant_registry::putconfig(Planttype::machinegun, plantinfo(100, 150, 5, "Machinegun", "res\\images\\cards\\machinegun.png", "res\\images\\plants\\machinegun\\0.png", w,h));
 	plant_registry::putconfig(Planttype::nuts, plantinfo(100, 100, 5, "Nuts", "res\\images\\cards\\nuts.png", "res\\images\\plants\\nuts\\0.png", w, h));
+}
+
+void UIconfig::load() {
+	loadimage(&black, "res//images//UIconfig//black.png");
 }

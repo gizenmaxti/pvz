@@ -33,6 +33,7 @@
     <ClInclude Include="plant_registry.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="tool.h" />
+    <ClInclude Include="UIconfig.h" />
     <ClInclude Include="zombie.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="adventure.h" />

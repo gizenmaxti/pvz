@@ -11,6 +11,12 @@ void putimagePNG(int x, int y, IMAGE* img, int alpha) {
     AlphaBlend(GetImageHDC(NULL), x, y, w, h,
         GetImageHDC(img), 0, 0, w, h, blend);
 }
+void putimagePNG(int x, int y,int w,int h, IMAGE* img, int alpha) {
+    BLENDFUNCTION blend = { AC_SRC_OVER, 0, (BYTE)alpha, AC_SRC_ALPHA };
+    AlphaBlend(GetImageHDC(NULL), x, y, w, h,
+        GetImageHDC(img), 0, 0, w, h, blend);
+}
+
 
 int countfiles(const std::string folderpath) {
     int count = 0;

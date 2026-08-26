@@ -6,6 +6,7 @@
 #include"plant_registry.h"
 #include"level_registry.h"
 #include "input.h"
+#include"UIconfig.h"
 //#define scenebegin adventure_game_Scene
 //#define scenebegin MenuScene
 
@@ -37,9 +38,10 @@ void SceneManager::changeScene(Action action=Action::pop, std::unique_ptr<scene>
 void SceneManager::initmainscene() {
 	mainscene = std::stack<std::unique_ptr<scene>>();
 
+	UIconfig::instance().load();
 	plant_registry::instance().load();
 	level_registry::instance().load();
-
+	
 	auto gamescene = std::make_unique<adventure_game_Scene>();
 	gamescene->setlevel(level::level_2);
 	changeScene(Action::push, std::move(gamescene));

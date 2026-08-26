@@ -113,5 +113,8 @@
     <ClInclude Include="level_registry.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="UIconfig.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
