@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="adventure_game.h" />
     <ClInclude Include="attack.h" />
+    <ClInclude Include="grassland.h" />
     <ClInclude Include="levelinfo.h" />
     <ClInclude Include="level_registry.h" />
     <ClInclude Include="plant_pool.h" />
@@ -43,6 +44,7 @@
     <ClCompile Include="adventure_game.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="grassland.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />

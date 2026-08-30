@@ -7,6 +7,7 @@
 levelinfo level_1() {
 	levelinfo l;
 	l.id = 1;
+	//l.g = std::make_unique<grassland>(5,9);
 	l.pool.add_plant(Planttype::peashooter);
 	l.pool.add_plant(Planttype::sunflower);
 	l.pool.add_plant(Planttype::nuts);

@@ -27,8 +27,6 @@ void adventure_Scene::returnbutton() {
 
 void adventure_Scene::draw_level() {
 	int y = 120, row = 0;
-	
-
 	for (auto k: level_registry::instance().getlevels()) {
 		int i = 0;
 		int x = 45 + row * 170;

@@ -19,6 +19,9 @@ public:
 	bool ishover(int buttonx, int buttony, int buttonw, int buttonh) const {
 		return  buttonx <=x&& x <= buttonx + buttonw && buttony <= y && y < buttony + buttonh;
 	}
+	bool isleftdown()const {
+		return leftdown;
+	}
 	bool isdragging() const {
 		return dragging;
 	}
@@ -28,5 +31,5 @@ private:
 	input(const input&) = delete;
 	input& operator=(const input&) = delete;
 	int x, y;
-	bool clicked = false,dragging;
+	bool clicked,dragging,leftdown;
 };

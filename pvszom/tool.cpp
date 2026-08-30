@@ -5,13 +5,13 @@
 #include "tool.h"
 #include <chrono>
 
-void putimagePNG(int x, int y, IMAGE* img, int alpha) {
+void putimagePNG(int x, int y,const IMAGE* img, int alpha) {
     int w = img->getwidth(), h = img->getheight();
     BLENDFUNCTION blend = { AC_SRC_OVER, 0, (BYTE)alpha, AC_SRC_ALPHA };
     AlphaBlend(GetImageHDC(NULL), x, y, w, h,
         GetImageHDC(img), 0, 0, w, h, blend);
 }
-void putimagePNG(int x, int y,int w,int h, IMAGE* img, int alpha) {
+void putimagePNG(int x, int y,int w,int h,const IMAGE* img, int alpha) {
     BLENDFUNCTION blend = { AC_SRC_OVER, 0, (BYTE)alpha, AC_SRC_ALPHA };
     AlphaBlend(GetImageHDC(NULL), x, y, w, h,
         GetImageHDC(img), 0, 0, w, h, blend);

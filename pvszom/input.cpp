@@ -1,6 +1,7 @@
 #include"input.h"
 void input::userclick() {
 	clicked = false;
+	leftdown = false;
 	ExMessage msg;
 	while (peekmessage(&msg)) {
 		x = msg.x;
@@ -11,6 +12,7 @@ void input::userclick() {
 		}
 		if(msg.message== WM_LBUTTONUP) {
 			dragging = false;
+			leftdown = true;
 		}
 	}
 }
