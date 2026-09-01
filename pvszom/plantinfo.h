@@ -14,6 +14,42 @@ enum class Planttype {
     nuts
 };
 
+//struct plantinfo {
+//	
+//	/*plantinfo(int hp, int val, int coold, std::string n, std::string cardpath, std::string imgpath, int w, int h) :
+//		inithp(hp), value(val), cooldown(coold), name(n), w(w), h(h) {
+//		int imgcount = countfiles(imgpath);
+//		patimgs.resize(imgcount);
+//		for (int i = 0; i < countfiles(imgpath); ++i)loadimage(&patimgs[i], (imgpath + "//" + std::to_string(i) + ".png").c_str(), w, h);
+//		loadimage(&cardimg, cardpath.c_str(), w, h);
+//	};*/
+//
+//	plantinfo(int hp, int val, int coold, std::string n, std::string cardpath, std::string imgpath, int w, int h,
+//		bool canshoot = false, int damage = 0)
+//		: inithp(hp), value(val), cooldown(coold), name(n), w(w), h(h), canshoot(canshoot), damage(damage) {
+//		int imgcount = countfiles(imgpath);
+//		patimgs.resize(imgcount);
+//		for (int i = 0; i < countfiles(imgpath); ++i)loadimage(&patimgs[i], (imgpath + "//" + std::to_string(i) + ".png").c_str(), w, h);
+//		loadimage(&cardimg, cardpath.c_str(), w, h);
+//
+//
+//	}
+//
+//
+//	bool canshoot;
+//	int damage;
+//
+//	int inithp;
+//	int value;
+//	int cooldown;
+//	int w, h;
+//	IMAGE cardimg;
+//
+//	std::vector<IMAGE>patimgs;
+//	std::string name;
+//	std::vector<IMAGE>bulletimgs;
+//};
+
 struct plantinfo {
     plantinfo(int hp, int val, int coold, std::string n, std::string cardpath, std::string imgpath, int w, int h,
         bool canshoot = false, int damage = 0, std::string bulletpath = "")
