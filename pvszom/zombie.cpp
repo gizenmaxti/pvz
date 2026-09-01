@@ -100,8 +100,8 @@
 //}
 //
 //void zoms::walking(int alpha) {
-//	auto now = std::chrono::steady_clock::now();
-//	float elapsed = std::chrono::duration<float>(now - lastframe).count();
+	//auto now = std::chrono::steady_clock::now();
+	//float elapsed = std::chrono::duration<float>(now - lastframe).count();
 //	if (elapsed >= 0.1f) {
 //		walkcurrentframe = (walkcurrentframe + 1) % typezombie[type].walk.size();
 //		lastframe = now;

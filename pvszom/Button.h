@@ -29,7 +29,6 @@ public:
 	IMAGE& gethover() { return hoverimg; };
 
 private:
-	//int x, y, width, height;
 	int width, height;
 	IMAGE img, hoverimg;
 };

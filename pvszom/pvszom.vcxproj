@@ -21,11 +21,12 @@
   <ItemGroup>
     <ClInclude Include="adventure_game.h" />
     <ClInclude Include="attack.h" />
+    <ClInclude Include="battle_manager.h" />
+    <ClInclude Include="bullet.h" />
     <ClInclude Include="grassland.h" />
     <ClInclude Include="levelinfo.h" />
     <ClInclude Include="level_registry.h" />
     <ClInclude Include="plant_pool.h" />
-    <ClInclude Include="shop.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="plant.h" />
@@ -33,15 +34,21 @@
     <ClInclude Include="plants.h" />
     <ClInclude Include="plant_registry.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="sun.h" />
+    <ClInclude Include="sun_manager.h" />
     <ClInclude Include="tool.h" />
     <ClInclude Include="UIconfig.h" />
-    <ClInclude Include="zombie.h" />
+    <ClInclude Include="zombie%28x%29.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="adventure.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="zombie.h" />
+    <ClInclude Include="zombie_registry.h" />
+    <ClInclude Include="zombie_type.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="adventure_game.cpp" />
+    <ClCompile Include="battle_manager.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="grassland.cpp" />
@@ -52,8 +59,10 @@
     <ClCompile Include="adventure.cpp" />
     <ClCompile Include="plants.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="sun_manager.cpp" />
     <ClCompile Include="tool.cpp" />
     <ClCompile Include="zombie.cpp" />
+    <ClCompile Include="zombie_registry.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

@@ -7,6 +7,7 @@
 #include"level_registry.h"
 #include "input.h"
 #include"UIconfig.h"
+#include"sun_manager.h"
 //#define scenebegin adventure_game_Scene
 //#define scenebegin MenuScene
 
@@ -41,6 +42,8 @@ void SceneManager::initmainscene() {
 	UIconfig::instance().load();
 	plant_registry::instance().load();
 	level_registry::instance().load();
+	zombie_registry::instance().load();
+	sun_registry::instance().load();
 	
 	auto gamescene = std::make_unique<adventure_game_Scene>();
 	gamescene->setlevel(level::level_2);
