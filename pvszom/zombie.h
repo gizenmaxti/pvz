@@ -1,41 +1,39 @@
-//#pragma once
-//#include <string>
-//#include <vector>
-//
-//
-//struct zombie {
-//	int hp;
-//	int type=0;
-//	int attack=20;
-//	float speed=0.3;
-//	int row;
-//	float x = 1000, y = 100;
-//	bool isEating=false;
-//	std::vector<IMAGE> walk;
-//	std::vector<IMAGE> eat;
-//	void walking(int alpha);
-//	void eating(int alpha);
-//	void move();
-//};
-//
-//struct zoms {
-//	std::chrono::steady_clock::time_point lastframe = std::chrono::steady_clock::now();
-//	int walkcurrentframe = 0;
-//	int eatcurrentframe = 0;
-//	int hp;
-//	bool isEating;
-//	int row;
-//	float x, zy;
-//	void walking(int color);
-//	void eating(int color);
-//	void move();
-//	//void debuffmove();
-//	int type=0;
-//};
-//extern std::vector<zoms>allzombie;
-//extern std::vector<zombie>typezombie;
-//void loadzombie();
-////void putzombie(int time);
-//void putzombie();
-//extern int framecount;
-////extern bool zn;
+#pragma once
+#include <chrono>
+#include "zombie_registry.h"
+
+class zombie {
+public:
+    zombie(Zombietype zt, int row)
+        : t(zt), row(row), hp(zombie_registry::instance().get_zombie_info(zt).inithp), x(900.0f) {
+    }
+
+    void move(float deltaTime) {
+        x -= zombie_registry::instance().get_zombie_info(t).speed * deltaTime;
+    }
+
+    const IMAGE& anim(bool eating) {
+        auto& imgs = eating ? zombie_registry::instance().get_zombie_info(t).eatimgs
+            : zombie_registry::instance().get_zombie_info(t).walkimgs;
+        auto now = std::chrono::steady_clock::now();
+        if (std::chrono::duration<float>(now - lastframe).count() > 0.15f) {
+            curframe = (curframe + 1) % imgs.size();
+            lastframe = now;
+        }
+        return imgs[curframe];
+    }
+
+    int gethp() const { return hp; }
+    void takeDamage(int dmg) { hp -= dmg; }
+    float getx() const { return x; }
+    int getrow() const { return row; }
+    int getattack() const { return zombie_registry::instance().get_zombie_info(t).attack; }
+
+private:
+    Zombietype t;
+    int row;
+    float x;
+    int hp;
+    int curframe = 0;
+    std::chrono::steady_clock::time_point lastframe = std::chrono::steady_clock::now();
+};

@@ -2,11 +2,11 @@
 #include <easyx.h>
 class Button {
 public:
-	
-	Button(int x, int y, int w, int h, const std::string& imgpath, const std::string& hoverpath="") :
+
+	Button(int x, int y, int w, int h, const std::string& imgpath, const std::string& hoverpath = "") :
 		x(x), y(y), width(w), height(h) {
 		if (!imgpath.empty())loadimage(&img, imgpath.c_str(), w, h);
-		if(!hoverpath.empty())loadimage(&hoverimg, hoverpath.c_str(), w, h);
+		if (!hoverpath.empty())loadimage(&hoverimg, hoverpath.c_str(), w, h);
 	};
 	int x, y;
 
@@ -29,7 +29,6 @@ public:
 	IMAGE& gethover() { return hoverimg; };
 
 private:
-	//int x, y, width, height;
 	int width, height;
 	IMAGE img, hoverimg;
 };

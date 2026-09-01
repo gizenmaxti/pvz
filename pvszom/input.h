@@ -3,7 +3,7 @@
 
 class input {
 public:
-	static input&instance() {
+	static input& instance() {
 		static input instance;
 		return instance;
 	}
@@ -17,7 +17,7 @@ public:
 		return clicked;
 	}
 	bool ishover(int buttonx, int buttony, int buttonw, int buttonh) const {
-		return  buttonx <=x&& x <= buttonx + buttonw && buttony <= y && y < buttony + buttonh;
+		return  buttonx <= x && x <= buttonx + buttonw && buttony <= y && y < buttony + buttonh;
 	}
 	bool isleftdown()const {
 		return leftdown;
@@ -31,5 +31,5 @@ private:
 	input(const input&) = delete;
 	input& operator=(const input&) = delete;
 	int x, y;
-	bool clicked,dragging,leftdown;
+	bool clicked, dragging, leftdown;
 };

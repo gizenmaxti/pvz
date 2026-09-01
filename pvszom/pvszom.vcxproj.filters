@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="zombie.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="menu.h">
       <Filter>头文件</Filter>
     </ClCompile>
@@ -33,16 +30,10 @@
     <ClCompile Include="adventure_game.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="menu.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="plants.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
@@ -60,18 +51,21 @@
     <ClCompile Include="grassland.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="battle_manager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="sun_manager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="zombie_registry.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="plants.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="tool.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="zombie.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="scene.h">
@@ -104,9 +98,6 @@
     <ClInclude Include="input.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="shop.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="plant_pool.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -120,6 +111,24 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="grassland.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="battle_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="bullet.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sun.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sun_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="zombie_registry.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="zombie_type.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

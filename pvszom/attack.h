@@ -9,8 +9,8 @@ public:
 	virtual int getY()const = 0;
 	virtual int getDamage()const = 0;
 private:
-		int x, y;
-		int damage;
-		int speed;
-		bool active;
+	int x, y;
+	int damage;
+	int speed;
+	bool active;
 };

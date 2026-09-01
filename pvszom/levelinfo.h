@@ -10,8 +10,7 @@ enum class level {
 
 struct levelinfo {
 	int id;
-	//std::unique_ptr<grassland>g;
 	IMAGE img, hoverimg;
-	int w=120, h=120, ww=140, hh=140;
+	int w = 120, h = 120, ww = 140, hh = 140;
 	plant_pool pool;
 };

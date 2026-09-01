@@ -6,7 +6,7 @@ public:
 		static level_registry instance;
 		return instance;
 	}
-	void putconfig(level l,levelinfo li) {
+	void putconfig(level l, levelinfo li) {
 		levelinfos.emplace(l, li);
 		levels.push_back(l);
 	}

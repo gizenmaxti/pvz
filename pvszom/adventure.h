@@ -19,7 +19,7 @@ public:
 	void addlevel(const level& l) {
 		level_list.push_back(l);
 	}
-	
+
 private:
 	void draw_level();
 	IMAGE background, background2;

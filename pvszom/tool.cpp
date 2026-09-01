@@ -5,13 +5,13 @@
 #include "tool.h"
 #include <chrono>
 
-void putimagePNG(int x, int y,const IMAGE* img, int alpha) {
+void putimagePNG(int x, int y, const IMAGE* img, int alpha) {
     int w = img->getwidth(), h = img->getheight();
     BLENDFUNCTION blend = { AC_SRC_OVER, 0, (BYTE)alpha, AC_SRC_ALPHA };
     AlphaBlend(GetImageHDC(NULL), x, y, w, h,
         GetImageHDC(img), 0, 0, w, h, blend);
 }
-void putimagePNG(int x, int y,int w,int h,const IMAGE* img, int alpha) {
+void putimagePNG(int x, int y, int w, int h, const IMAGE* img, int alpha) {
     BLENDFUNCTION blend = { AC_SRC_OVER, 0, (BYTE)alpha, AC_SRC_ALPHA };
     AlphaBlend(GetImageHDC(NULL), x, y, w, h,
         GetImageHDC(img), 0, 0, w, h, blend);
@@ -32,11 +32,11 @@ int countfiles(const std::string folderpath) {
     return count;
 }
 std::vector<timer>timers;
-void timer::updatetime(float time,std::function<void ()>f) {
+void timer::updatetime(float time, std::function<void()>f) {
     auto now = std::chrono::steady_clock::now();
     float elapsed = std::chrono::duration<float>(now - lastframe).count();
     if (elapsed >= time) {
-		f();
+        f();
         lastframe = now;
     }
 }

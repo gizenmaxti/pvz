@@ -7,9 +7,10 @@ public:
 		return uiconfig;
 	}
 	void load();
-	IMAGE &getblack() {
+	IMAGE& getblack() {
 		return black;
 	}
 private:
+
 	IMAGE black;
 };

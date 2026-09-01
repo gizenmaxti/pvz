@@ -10,7 +10,7 @@ void input::userclick() {
 			clicked = true;
 			dragging = true;
 		}
-		if(msg.message== WM_LBUTTONUP) {
+		if (msg.message == WM_LBUTTONUP) {
 			dragging = false;
 			leftdown = true;
 		}

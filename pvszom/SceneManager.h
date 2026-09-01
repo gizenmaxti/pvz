@@ -2,6 +2,9 @@
 #include <stack>
 #include<memory>
 #include "scene.h"
+#define WIN_WIDTH 900
+#define WIN_HEIGHT 600
+
 enum class SceneType {
 	MainMenu,
 	Adventure,
@@ -27,7 +30,7 @@ public:
 		return instance;
 	}
 	void sceneLoop();
-	void changeScene(Action action, const std::unique_ptr<scene>cur=nullptr);
+	void changeScene(Action action, const std::unique_ptr<scene>cur = nullptr);
 private:
 	SceneManager() = default;
 	SceneManager(const SceneManager&) = delete;

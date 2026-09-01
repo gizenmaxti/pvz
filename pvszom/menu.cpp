@@ -1,7 +1,6 @@
 #include"menu.h"
 #include"adventure.h"
 #include"SceneManager.h"
-#include"game.h"
 #include"input.h"
 
 void menubutton::onClick(bool clicked) {
@@ -24,7 +23,7 @@ void menubutton::hover(bool hovered) {
 
 void MenuScene::load() {
 	loadimage(&menu_begin, "res\\images\\menu\\menu_begin.jpg", WIN_WIDTH, WIN_HEIGHT);
-	
+
 	buttons.clear();
 	buttons.emplace_back(450, 60, 380, 150, "res\\images\\menu\\button1.png", "res\\images\\menu\\select_button1.png", []() {return std::make_unique<adventure_Scene>(); });
 	buttons.emplace_back(450, 172, 360, 130, "res\\images\\menu\\button2.png", "res\\images\\menu\\select_button2.png", nullptr);

@@ -6,6 +6,8 @@
 #include "plant_pool.h"
 #include"Button.h"
 #include"grassland.h"
+#include"battle_manager.h"
+#include"sun_manager.h"
 enum process {
 	ready,
 	fight,
@@ -15,10 +17,17 @@ enum process {
 
 
 struct product {
-	product(Planttype rt):t(rt) {
+	product(Planttype rt) :t(rt) {
 		cooldown = plant_registry::instance().get_plant_info(t).cooldown;
 	}
+	bool isbuy() {
+		return std::chrono::duration<float>(std::chrono::steady_clock::now() - lastbuy).count() > cooldown;
+	}
+	void buy() {
+		lastbuy = std::chrono::steady_clock::now();
+	}
 	Planttype t;
+	std::chrono::steady_clock::time_point lastbuy = std::chrono::steady_clock::now();
 	int cooldown;
 };
 
@@ -37,13 +46,15 @@ public:
 	}
 private:
 	grassland g;
-	std::optional<Planttype>selectplant = std:: nullopt;
-	process curprocess=process::ready;
+	product* selectplant = nullptr;
+	process curprocess = process::ready;
 	levelinfo levelconfig;
 	plant_pool pool;
-	//std::vector<Planttype>shop;
 	std::vector<product>shop;
 	level curlevel;
-	IMAGE background,shopimg,poolimg;
+	IMAGE background, shopimg, poolimg;
 	std::unique_ptr<Basicbutton>start;
+	battle_manager battle;
+	sun_manager suns;
+	std::chrono::steady_clock::time_point lastFrameTime = std::chrono::steady_clock::now();
 };
