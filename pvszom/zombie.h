@@ -26,12 +26,21 @@ public:
     const IMAGE& anim(bool eating) {
         auto& imgs = eating ? zombie_registry::instance().get_zombie_info(t).eatimgs
             : zombie_registry::instance().get_zombie_info(t).walkimgs;
+
+        // 素材缺失时不能对 0 取模再去索引空数组，否则直接
+        // "vector subscript out of range" 崩溃。这是之前
+        // Debug Assertion Failed 的根因之一。
+        if (imgs.empty()) {
+            static const IMAGE empty{};
+            return empty;
+        }
+
         auto now = std::chrono::steady_clock::now();
         if (std::chrono::duration<float>(now - lastframe).count() > 0.15f) {
-            curframe = (curframe + 1) % imgs.size();
+            curframe = (curframe + 1) % static_cast<int>(imgs.size());
             lastframe = now;
         }
-        return imgs[curframe];
+        return imgs[static_cast<size_t>(curframe) % imgs.size()];
     }
 
     int gethp() const { return hp; }

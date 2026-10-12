@@ -58,8 +58,7 @@ void battle_manager::updatePlants(float deltaTime) {
             // 植物需要知道自己在哪一格：射手据此判断右方是否有僵尸、子弹从哪里射出；
             // 向日葵据此决定阳光从哪一格落下。
             if (auto* sp = dynamic_cast<ShooterPlant*>(p)) sp->setGrid(i, j);
-            else if (auto* sf = dynamic_cast<SunflowerPlant*>(p)) sf->setGrid(i, j);
-            p->onTick(deltaTime, ctx);
+            else if (auto* sf = dynamic_cast<SunflowerPlant*>(p)) sf->setGrid(i, j);            p->onTick(deltaTime, ctx);
         }
     }
 }
@@ -86,6 +85,14 @@ void battle_manager::updateZombies(float deltaTime) {
         constexpr float kFieldLeft = 170.0f;
 
         const float center = z.getx() + kZombieCenterOffset;
+
+        // 僵尸已经越过最左侧（列号会变成负数）：直接判定失败并停止后续逻辑。
+        // 原实现只在 x<10 时置结果，但循环体仍会继续执行，
+        // 于是 eatTimer[row][负数] 写越界 —— 这也是调试断言崩溃的根因之一。
+        if (center < kFieldLeft) {
+            result = BattleResult::lose;
+            continue;
+        }
 
         if (row >= 0 && row < g->row) {
             const int col = static_cast<int>(std::floor((center - kFieldLeft) / kCellW));
@@ -115,16 +122,33 @@ void battle_manager::updateZombies(float deltaTime) {
         putimagePNG(static_cast<int>(z.getx()) - 20, 90 + row * 100 - 70, &z.anim(eating));
 
         if (z.getx() < 10) {
-            result = BattleResult::lose;
+            result = BattleResult::lose;   // 有僵尸进屋，本局失败
         }
     }
 }
 
 void battle_manager::updateBullets(float deltaTime) {
+    // 子弹飞行速度。配合各射手的连发间隔，保证相邻豌豆相距约半个格子（40px）。
+    constexpr float kBulletSpeed = 200.0f;
+    constexpr float kCellW = 80.0f;
+    constexpr float kFieldLeft = 170.0f;
+
     for (auto& b : bullets) {
-        b.x += 150.0f * deltaTime;
+        b.x += kBulletSpeed * deltaTime;
 
         if (b.x > 900) { b.active = false; continue; }   // 飞出右边界即失效
+
+        // 穿过火焰树桩：点燃成火焰子弹（伤害提升，贴图替换）
+        const int col = static_cast<int>(std::floor((b.x - kFieldLeft) / kCellW));
+        if (col >= 0 && col < g->col) {
+            plant* p = g->getPlant(b.row, col);
+            auto* stump = dynamic_cast<TreeStumpPlant*>(p);
+            if (stump && !b.fire) {
+                b.fire = true;
+                b.damage = static_cast<int>(b.damage * 1.5f);   // 火焰子弹伤害更高
+                if (const IMAGE* fi = stump->fireBulletImg()) b.img = fi;
+            }
+        }
 
         putimagePNG(static_cast<int>(b.x), static_cast<int>(b.y - 40), b.img);
 

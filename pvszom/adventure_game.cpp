@@ -130,15 +130,8 @@ void adventure_game_Scene::shoprendering() {
 		const bool canBuy = i.isbuy();
 		const bool affordable = suns.getSunCount() >= info.value;
 
-		if (!canBuy) {
-			// 冷却中：按剩余比例自上而下压一层遮罩，给出可视化的冷却进度
-			const int covered = static_cast<int>(info.h * i.cooldownRatio());
-			if (covered > 0) {
-				putimagePNG(x, y, info.w, covered, &UIconfig::instance().getblack(), 200);
-			}
-		}
-		else if (!affordable) {
-			// 冷却已完成但阳光不足：整张卡压暗
+		// 冷却中或阳光不足，都把整张卡片压暗，两者视觉效果保持一致
+		if (!canBuy || !affordable) {
 			putimagePNG(x, y, info.w, info.h, &UIconfig::instance().getblack(), 180);
 		}
 

@@ -42,6 +42,17 @@ void level_registry::load() {
 
 void plant_registry::load() {
 	int w = static_cast<int>(63 * 0.9), h = static_cast<int>(88 * 0.9);
+
+	// 火焰子弹素材：子弹穿过树桩后会被点燃，这里预加载一次
+	{
+		auto& fireImgs = fireBulletImgs();
+		fireImgs.clear();
+		const int fc = countfiles("res\\images\\plants\\bullet\\firepea");
+		fireImgs.resize(fc);
+		for (int i = 0; i < fc; ++i)
+			loadimage(&fireImgs[i], ("res\\images\\plants\\bullet\\firepea\\" + std::to_string(i) + ".png").c_str());
+	}
+
 	plant_registry::putconfig(Planttype::peashooter, plantinfo(100, 100, 10, "Peashooter",
 		"res\\images\\cards\\peashooter.png", "res\\images\\plants\\peashooter", w, h,
 		true, 20, "res\\images\\plants\\bullet\\pea.png", 1.5f));

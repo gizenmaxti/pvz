@@ -65,6 +65,9 @@ public:
 
     void takeDamage(int dmg) { hp -= dmg; }
 
+    // 是否为火焰树桩（子弹穿过它会被点燃）
+    virtual bool isTreeStump() const { return false; }
+
 protected:
     Planttype t;
     int hp = 100;

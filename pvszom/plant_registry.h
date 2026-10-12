@@ -30,6 +30,12 @@ public:
 
     static std::unique_ptr<plant> create(Planttype t);
 
+    // 火焰子弹素材（子弹穿过树桩后使用）。单独加载一次，避免战斗中反复读盘。
+    static std::vector<IMAGE>& fireBulletImgs() {
+        static std::vector<IMAGE> imgs;
+        return imgs;
+    }
+
     void load();
 
 private:

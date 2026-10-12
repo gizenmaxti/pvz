@@ -35,7 +35,16 @@ public:
         onFire(ctx);
     }
 
-    void setGrid(int row, int col) { gridRow = row; gridCol = col; }
+    void setGrid(int row, int col) {
+        // 首次获得坐标时给攻击计时一个按格子错开的初值，
+        // 否则同一排的射手会在同一帧齐射，子弹完全叠在一起。
+        if (!gridInited) {
+            gridInited = true;
+            attackTimer = static_cast<float>((row * 9 + col) % 10) * 0.09f;
+        }
+        gridRow = row;
+        gridCol = col;
+    }
 
 protected:
     // 子类实现：本帧发射什么
@@ -46,6 +55,7 @@ protected:
 
     int gridRow = 0;
     int gridCol = 0;
+    bool gridInited = false;
 };
 
 // 豌豆射手：单发普通豌豆
@@ -80,7 +90,8 @@ protected:
     void onFire(BattleContext& ctx) override {
         if (ctx.spawnBullet)
             ctx.spawnBullet(bulletX(), bulletY(), gridRow, getDamage(), &getBulletImg(), false);
-        pendingSecond = 0.12f;   // 第二颗延后 0.12 秒
+        // 第二颗延后 0.2 秒：子弹速度 200px/s，两颗相距 40px = 半个格子
+        pendingSecond = 0.2f;
     }
 
 private:
@@ -123,8 +134,10 @@ protected:
 
 private:
     static constexpr int   burstCount = 4;      // 每轮 4 颗
-    static constexpr float shotDelay = 0.12f;   // 连发间隔
-    static constexpr float cooldownAfterBurst = 1.6f;  // 一轮结束后的冷却
+    // 连发间隔 0.2 秒：子弹速度 200px/s，相邻两颗相距 40px = 半个格子，
+    // 避免 4 颗豌豆挤成一团。原为 0.12 秒（仅 24px），视觉上就是一条线。
+    static constexpr float shotDelay = 0.2f;
+    static constexpr float cooldownAfterBurst = 1.4f;  // 一轮结束后的冷却
 
     int burstLeft = 0;
     float shotTimer = 0.0f;
@@ -190,11 +203,20 @@ public:
     void setGrid(int, int) {}
 };
 
-// 树桩：低血量、不攻击
+// 树桩：低血量、不攻击。子弹穿过它会被点燃，变成火焰子弹（伤害更高）。
 class TreeStumpPlant : public plant {
 public:
     using plant::plant;
+
     void setGrid(int, int) {}
+    bool isTreeStump() const override { return true; }
+
+    // 火焰子弹的贴图：使用单独加载的火焰豌豆素材（指针长期有效）
+    const IMAGE* fireBulletImg() const {
+        auto& imgs = plant_registry::fireBulletImgs();
+        if (imgs.empty()) return nullptr;
+        return &imgs[0];
+    }
 };
 
 // 土豆雷：不攻击（爆炸行为尚未实现，先按静态植物处理）
