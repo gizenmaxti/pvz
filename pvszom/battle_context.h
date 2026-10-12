@@ -12,5 +12,6 @@ class zombie;
 struct BattleContext {
     std::vector<zombie>* zombies = nullptr;
     std::function<void(float x, float y, int row, int damage, const void* img, bool ice)> spawnBullet;
-    std::function<void()> spawnSun;
+    // 产出阳光：带上产出的植物所在格，阳光会从该位置落下
+    std::function<void(int row, int col)> spawnSun;
 };

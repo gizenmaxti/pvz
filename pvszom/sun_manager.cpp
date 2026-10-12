@@ -36,9 +36,11 @@ void sun_manager::update(float deltaTime) {
         }
 
         auto& imgs = sun_registry::instance().getImgs();
+        if (imgs.empty()) { ++it; continue; }   // 素材缺失时不做取模运算，避免除零崩溃
+
         auto now = std::chrono::steady_clock::now();
         if (std::chrono::duration<float>(now - it->lastframe).count() > 0.15f) {
-            it->curframe = (it->curframe + 1) % imgs.size();
+            it->curframe = (it->curframe + 1) % static_cast<int>(imgs.size());
             it->lastframe = now;
         }
         putimagePNG(static_cast<int>(it->x), static_cast<int>(it->y), &imgs[it->curframe]);

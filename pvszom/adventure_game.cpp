@@ -31,8 +31,8 @@ void adventure_game_Scene::load() {
 
 	battle.init(&g, levelconfig->totalzonbie);
 	suns.init();
-	// 向日葵产出的阳光交给 sun_manager 统一管理
-	battle.setSunSpawner([this]() { suns.spawnDrop(); });
+	// 向日葵产出的阳光交给 sun_manager 统一管理，落点就是那株向日葵所在格
+	battle.setSunSpawner([this](int row, int col) { suns.spawnFromPlant(row, col); });
 }
 void adventure_game_Scene::poolrendering() {
 	putimage(0, 90, &poolimg);
@@ -125,12 +125,25 @@ void adventure_game_Scene::shoprendering() {
 		const auto& info = plant_registry::instance().get_plant_info(i.t);
 		int x = 30 + (col * (info.w + 7));
 		putimage(x, y, &info.cardimg);
-		bool affordable = suns.getSunCount() >= info.value;
-		if (!i.isbuy() || !affordable) {
+
+		// 购买条件：冷却结束（canBuy）且阳光足够（affordable），两者缺一不可
+		const bool canBuy = i.isbuy();
+		const bool affordable = suns.getSunCount() >= info.value;
+
+		if (!canBuy) {
+			// 冷却中：按剩余比例自上而下压一层遮罩，给出可视化的冷却进度
+			const int covered = static_cast<int>(info.h * i.cooldownRatio());
+			if (covered > 0) {
+				putimagePNG(x, y, info.w, covered, &UIconfig::instance().getblack(), 200);
+			}
+		}
+		else if (!affordable) {
+			// 冷却已完成但阳光不足：整张卡压暗
 			putimagePNG(x, y, info.w, info.h, &UIconfig::instance().getblack(), 180);
 		}
+
 		if (input::instance().isdragging() && input::instance().ishover(x, y, info.w, info.h)
-			&& !hasSelection && i.isbuy() && affordable) {
+			&& !hasSelection && canBuy && affordable) {
 			selectplant = i.t;
 			hasSelection = true;
 		}
@@ -140,16 +153,17 @@ void adventure_game_Scene::shoprendering() {
 		// 每帧按值重新查找，而不是持有裸指针：shop 若在本帧被改动也不会悬空
 		product* sel = findAvailableProduct(selectplant);
 		if (!sel) {
-			hasSelection = false;   // 卡已被移除或正在冷却
+			hasSelection = false;   // 卡已被移除或进入冷却
 		}
 		else if (input::instance().isleftdown()) {
 			const int offsetx = input::instance().getx() - 170;
 			const int offsety = input::instance().gety() - 70;
 			const int w = 80, h = 100;   // 列距、行距
 			const auto& info = plant_registry::instance().get_plant_info(selectplant);
-			if (g.planting(offsety / h, offsetx / w, selectplant, suns.getSunCount())) {
-				suns.trySpend(info.value);   // 校验已通过，此处必然成功
-				sel->buy();
+			// 阳光不足或冷却未结束时 plant()/trySpend 会拒绝，买不成
+			if (g.planting(offsety / h, offsetx / w, selectplant, suns.getSunCount())
+				&& suns.trySpend(info.value)) {
+				sel->buy();              // 购买成功，进入冷却
 				hasSelection = false;
 			}
 		}

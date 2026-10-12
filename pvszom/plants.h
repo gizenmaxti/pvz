@@ -87,15 +87,48 @@ private:
     float pendingSecond = 0.0f;
 };
 
-// 机枪射手：射速极快（间隔由配置给出）
+// 机枪射手：一轮连发 4 颗豌豆，然后进入冷却，冷却结束再连发下一轮
 class MachineGunPlant : public ShooterPlant {
 public:
     using ShooterPlant::ShooterPlant;
-protected:
-    void onFire(BattleContext& ctx) override {
-        if (ctx.spawnBullet)
-            ctx.spawnBullet(bulletX(), bulletY(), gridRow, getDamage(), &getBulletImg(), false);
+
+    void onTick(float deltaTime, BattleContext& ctx) override {
+        if (burstLeft > 0) {
+            // 连发阶段：每 shotDelay 秒放一颗
+            shotTimer += deltaTime;
+            while (burstLeft > 0 && shotTimer >= shotDelay) {
+                shotTimer -= shotDelay;
+                if (ctx.spawnBullet)
+                    ctx.spawnBullet(bulletX(), bulletY(), gridRow, getDamage(), &getBulletImg(), false);
+                --burstLeft;
+            }
+            if (burstLeft == 0) {
+                cooldownTimer = cooldownAfterBurst;   // 一轮打完，进入冷却
+                shotTimer = 0.0f;
+            }
+            return;
+        }
+
+        // 冷却阶段
+        cooldownTimer -= deltaTime;
+        if (cooldownTimer > 0.0f) return;
+        if (!zombieAheadInRow(ctx, gridRow, gridCol)) return;
+
+        burstLeft = burstCount;   // 冷却结束且前方有僵尸，开始下一轮连发
+        shotTimer = shotDelay;    // 让第一颗立即射出
     }
+
+protected:
+    void onFire(BattleContext&) override {}   // 机枪不用基类的单发逻辑
+
+private:
+    static constexpr int   burstCount = 4;      // 每轮 4 颗
+    static constexpr float shotDelay = 0.12f;   // 连发间隔
+    static constexpr float cooldownAfterBurst = 1.6f;  // 一轮结束后的冷却
+
+    int burstLeft = 0;
+    float shotTimer = 0.0f;
+    float cooldownTimer = 0.0f;
 };
 
 // 寒冰射手：命中后使僵尸减速（由子弹的 ice 标记触发）
@@ -114,7 +147,7 @@ class SunflowerPlant : public plant {
 public:
     using plant::plant;
 
-    void setGrid(int, int) {}
+    void setGrid(int row, int col) { gridRow = row; gridCol = col; }
 
     void onTick(float deltaTime, BattleContext& ctx) override {
         sunTimer += deltaTime;
@@ -122,7 +155,7 @@ public:
             sunTimer -= sunInterval;
             sunProducing = true;
             produceTimer = 0.6f;            // 播放一小段产出动画
-            if (ctx.spawnSun) ctx.spawnSun();
+            if (ctx.spawnSun) ctx.spawnSun(gridRow, gridCol);   // 真正产出一颗可点击的阳光
         }
         if (sunProducing) {
             produceTimer -= deltaTime;
@@ -142,8 +175,10 @@ public:
 private:
     int frameCounter() const { return static_cast<int>(sunTimer / kAnimFrameTime); }
 
+    int gridRow = 0;
+    int gridCol = 0;
     float sunTimer = 0.0f;
-    float sunInterval = 12.0f;   // 每 12 秒产一次阳光
+    float sunInterval = 8.0f;    // 每 8 秒产一次阳光（与 PvZ 的 24 秒相比更快，便于实测）
     float produceTimer = 0.0f;
     bool sunProducing = false;
 };

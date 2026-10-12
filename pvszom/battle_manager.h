@@ -21,7 +21,7 @@ public:
     BattleResult getResult() const { return result; }
 
     // 向日葵产阳光时由植物回调触发；adventure_game 把它接到 sun_manager 上
-    void setSunSpawner(std::function<void()> f) { sunSpawner = std::move(f); }
+    void setSunSpawner(std::function<void(int row, int col)> f) { sunSpawner = std::move(f); }
 
 private:
     void trySpawnZombie(float deltaTime);
@@ -33,7 +33,7 @@ private:
     grassland* g = nullptr;
     std::vector<zombie> zombies;
     std::vector<bullet> bullets;
-    std::function<void()> sunSpawner;
+    std::function<void(int row, int col)> sunSpawner;
 
     int totalToSpawn = 10;
     int spawnedCount = 0;

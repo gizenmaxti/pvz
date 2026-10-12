@@ -19,16 +19,29 @@ enum process {
 struct product {
 	product(Planttype rt) :t(rt) {
 		cooldown = plant_registry::instance().get_plant_info(t).cooldown;
+		// 关键：初始化为"冷却已经结束"的状态。
+		// 原来 lastbuy 默认等于构造时刻，导致开局时每张卡都被判定为冷却中。
+		lastbuy = std::chrono::steady_clock::now() - std::chrono::seconds(cooldown + 1);
 	}
-	bool isbuy() {
+
+	// 冷却是否已经结束
+	bool isbuy() const {
 		return std::chrono::duration<float>(std::chrono::steady_clock::now() - lastbuy).count() > cooldown;
+	}
+
+	// 剩余冷却比例：1 = 刚买完（全遮罩），0 = 冷却完成（无遮罩）
+	float cooldownRatio() const {
+		if (cooldown <= 0) return 0.0f;
+		const float elapsed = std::chrono::duration<float>(std::chrono::steady_clock::now() - lastbuy).count();
+		const float remain = 1.0f - elapsed / static_cast<float>(cooldown);
+		return remain < 0.0f ? 0.0f : (remain > 1.0f ? 1.0f : remain);
 	}
 
 	void buy() {
 		lastbuy = std::chrono::steady_clock::now();
 	}
 	Planttype t;
-	std::chrono::steady_clock::time_point lastbuy = std::chrono::steady_clock::now();
+	std::chrono::steady_clock::time_point lastbuy;
 	int cooldown;
 };
 //struct uires {

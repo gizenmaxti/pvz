@@ -47,16 +47,18 @@ void battle_manager::updatePlants(float deltaTime) {
     ctx.spawnBullet = [this](float x, float y, int row, int damage, const void* img, bool ice) {
         bullets.emplace_back(x, y, row, damage, static_cast<const IMAGE*>(img), ice);
     };
-    ctx.spawnSun = [this]() {
-        if (sunSpawner) sunSpawner();
+    ctx.spawnSun = [this](int row, int col) {
+        if (sunSpawner) sunSpawner(row, col);
     };
 
     for (int i = 0; i < g->row; ++i) {
         for (int j = 0; j < g->col; ++j) {
             plant* p = g->getPlant(i, j);
             if (!p) continue;
-            // 射手需要知道自己在哪一格，才能判断右方是否有僵尸、子弹从哪里射出
+            // 植物需要知道自己在哪一格：射手据此判断右方是否有僵尸、子弹从哪里射出；
+            // 向日葵据此决定阳光从哪一格落下。
             if (auto* sp = dynamic_cast<ShooterPlant*>(p)) sp->setGrid(i, j);
+            else if (auto* sf = dynamic_cast<SunflowerPlant*>(p)) sf->setGrid(i, j);
             p->onTick(deltaTime, ctx);
         }
     }
@@ -72,19 +74,23 @@ void battle_manager::updateZombies(float deltaTime) {
         bool eating = false;
         int eatCol = -1;
 
-        // 原实现只判断僵尸所在的整数格。僵尸从右侧靠近时，前端已经贴到植物了，
-        // 它所在的格子却仍停在植物右边一格，于是出现"隔着一个格子就啃"的现象。
-        // 正确判定：把僵尸整体当作一个矩形（前缘往前 30 像素、自身宽约 60 像素），
-        // 找到它真正接触到的第一株植物。
-        const float front = z.getx() - 30.0f;   // 僵尸前端（嘴）
-        const float back = z.getx() + 60.0f;    // 僵尸尾部
-        const int firstCol = static_cast<int>(std::floor((front - 170.0f) / 80.0f));
-        const int lastCol = static_cast<int>(std::floor((back - 170.0f) / 80.0f));
+        // 僵尸与植物的接触判定。
+        //
+        // 实测素材后修正（这一步之前一直是我靠猜）：
+        //   * 僵尸原图 166x144，但非透明像素只占 x∈[65,141]，即身体长在图片右侧；
+        //   * 代码里绘制位置是 x-20，再缩放到 144x106 显示；
+        //   两相叠加，僵尸的视觉主体中心大约落在 x+40 处，而不是 x 本身。
+        // 因此"僵尸中心进入植物所在格"才是真正面对面接触的时刻。
+        constexpr float kZombieCenterOffset = 40.0f;   // 僵尸视觉中心相对其坐标的偏移
+        constexpr float kCellW = 80.0f;
+        constexpr float kFieldLeft = 170.0f;
+
+        const float center = z.getx() + kZombieCenterOffset;
 
         if (row >= 0 && row < g->row) {
-            for (int c = firstCol; c <= lastCol; ++c) {
-                if (c < 0 || c >= g->col) continue;
-                if (g->getPlant(row, c)) { eatCol = c; break; }   // 取最靠右的被接触植物
+            const int col = static_cast<int>(std::floor((center - kFieldLeft) / kCellW));
+            if (col >= 0 && col < g->col && g->getPlant(row, col)) {
+                eatCol = col;
             }
         }
 

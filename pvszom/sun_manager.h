@@ -16,6 +16,12 @@ public:
     // x/y 传入负值表示随机位置（用于天空掉落）。
     void spawnDrop(float x = -1.0f, float y = -1.0f);
 
+    // 向日葵产出时调用：从该格位置落下一颗可点击收集的阳光
+    void spawnFromPlant(int row, int col) {
+        spawnDrop(170.0f + static_cast<float>(col) * 80.0f,
+                  90.0f + static_cast<float>(row) * 100.0f);
+    }
+
 private:
     std::vector<sun_drop> drops;
     float spawnTimer = 0;
