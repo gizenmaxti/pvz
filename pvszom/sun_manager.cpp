@@ -4,15 +4,28 @@
 #include <cstdlib>
 #include <easyx.h>
 
+void sun_manager::spawnDrop(float x, float y) {
+    sun_drop d;
+    if (x < 0.0f) {
+        // 天空掉落：随机横向位置，落到场地内随机高度
+        d.x = 170.0f + static_cast<float>(rand() % 650);
+        d.y = 0.0f;
+        d.targetY = 150.0f + static_cast<float>(rand() % 350);
+    }
+    else {
+        // 向日葵产出：从植物位置落下一点点
+        d.x = x;
+        d.y = y;
+        d.targetY = y + 40.0f;
+    }
+    drops.push_back(d);
+}
+
 void sun_manager::update(float deltaTime) {
     spawnTimer += deltaTime;
     if (spawnTimer >= spawnInterval) {
         spawnTimer = 0;
-        sun_drop d;
-        d.x = 170.0f + static_cast<float>(rand() % 650);
-        d.y = 0;
-        d.targetY = 150.0f + static_cast<float>(rand() % 350);
-        drops.push_back(d);
+        spawnDrop();   // 天空自然掉落
     }
 
     for (auto it = drops.begin(); it != drops.end();) {

@@ -31,6 +31,8 @@ void adventure_game_Scene::load() {
 
 	battle.init(&g, levelconfig->totalzonbie);
 	suns.init();
+	// 向日葵产出的阳光交给 sun_manager 统一管理
+	battle.setSunSpawner([this]() { suns.spawnDrop(); });
 }
 void adventure_game_Scene::poolrendering() {
 	putimage(0, 90, &poolimg);
@@ -169,9 +171,9 @@ void adventure_game_Scene::fight() {
 	float deltaTime = std::chrono::duration<float>(now - lastFrameTime).count();
 	lastFrameTime = now;
 	if (deltaTime > 0.1f) deltaTime = 0.1f; // clamp,避免调试断点导致的异常大跳变
-	g.update();
-	battle.update(deltaTime);
-	suns.update(deltaTime);
+	g.update(deltaTime);        // 只推进植物动画与死亡清理
+	battle.update(deltaTime);   // 内部负责植物行为、绘制、子弹与僵尸
+	suns.update(deltaTime);     // 阳光最后画，保证在最上层
 	shoprendering();
 	drawSunCount(suns.getSunCount(), 10, 70);
 	if (battle.getResult() == BattleResult::win) {

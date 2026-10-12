@@ -1,6 +1,7 @@
 #pragma once
 #include <chrono>
 #include "zombie_registry.h"
+#include "battle_context.h"
 
 class zombie {
 public:
@@ -9,8 +10,18 @@ public:
     }
 
     void move(float deltaTime) {
-        x -= zombie_registry::instance().get_zombie_info(t).speed * deltaTime;
+        // 冰冻状态下移速减半；减速剩余时间在这里递减
+        if (slowTimer > 0.0f) {
+            slowTimer -= deltaTime;
+            if (slowTimer < 0.0f) slowTimer = 0.0f;
+        }
+        const float factor = isSlowed() ? 0.5f : 1.0f;
+        x -= zombie_registry::instance().get_zombie_info(t).speed * factor * deltaTime;
     }
+
+    // 寒冰射手命中效果：减速一段时间（重复命中则刷新）
+    void applySlow(float duration) { if (duration > slowTimer) slowTimer = duration; }
+    bool isSlowed() const { return slowTimer > 0.0f; }
 
     const IMAGE& anim(bool eating) {
         auto& imgs = eating ? zombie_registry::instance().get_zombie_info(t).eatimgs
@@ -35,5 +46,6 @@ private:
     float x;
     int hp;
     int curframe = 0;
+    float slowTimer = 0.0f;   // >0 表示处于冰冻减速中
     std::chrono::steady_clock::time_point lastframe = std::chrono::steady_clock::now();
 };

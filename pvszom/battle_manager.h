@@ -1,8 +1,11 @@
 #pragma once
 #include <vector>
+#include <memory>
+#include <functional>
 #include "zombie.h"
 #include "bullet.h"
 #include "grassland.h"
+#include "battle_context.h"
 
 enum class BattleResult { ongoing, win, lose };
 
@@ -17,24 +20,27 @@ public:
     void update(float deltaTime);
     BattleResult getResult() const { return result; }
 
+    // 向日葵产阳光时由植物回调触发；adventure_game 把它接到 sun_manager 上
+    void setSunSpawner(std::function<void()> f) { sunSpawner = std::move(f); }
+
 private:
     void trySpawnZombie(float deltaTime);
     void updateZombies(float deltaTime);
-    void updatePlantAttacks(float deltaTime);
+    void updatePlants(float deltaTime);
     void updateBullets(float deltaTime);
     void checkResult();
 
     grassland* g = nullptr;
     std::vector<zombie> zombies;
     std::vector<bullet> bullets;
+    std::function<void()> sunSpawner;
 
     int totalToSpawn = 10;
     int spawnedCount = 0;
     float spawnTimer = 0;
     float spawnInterval = 4.0f;
 
-    float attackCooldownTimer[5][9] = {}; // 每个格子独立的攻击冷却计时
-    float eatTimer[5][9] = {};            // 每个格子独立的啃食计时（原来是函数级 static，会跨关卡残留）
+    float eatTimer[5][9] = {};   // 每个格子独立的啃食计时（勿用函数级 static，会跨关卡残留）
 
     BattleResult result = BattleResult::ongoing;
 };

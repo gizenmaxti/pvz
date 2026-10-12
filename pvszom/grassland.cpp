@@ -2,40 +2,55 @@
 #include"grassland.h"
 #include"plant_registry.h"
 #include"tool.h"
-#include"adventure_game.h"
 
 bool grassland::planting(int row, int col, Planttype t, int suncount) {
-	// 边界与占位校验统一走 row/col 成员，避免硬编码 5/9 与成员不一致
 	if (row < 0 || row >= this->row || col < 0 || col >= this->col) return false;
-	if (land[row][col].has_value()) return false;
+	if (land[row][col]) return false;                       // 该格已有植物
 	if (suncount < plant_registry::instance().get_plant_info(t).value) return false;
 
-	land[row][col].emplace(t);
+	auto p = plant_registry::create(t);
+	if (!p) return false;                                   // 未注册工厂的类型
+	land[row][col] = std::move(p);
 	return true;
 }
+
 void grassland::remove(int row, int col) {
-	land[row][col] = std::nullopt;
+	if (row < 0 || row >= this->row || col < 0 || col >= this->col) return;
+	land[row][col].reset();
 }
-void grassland::update() {
+
+// 植物动画推进与死亡清理
+void grassland::update(float deltaTime) {
 	for (int i = 0; i < row; ++i) {
 		for (int j = 0; j < col; ++j) {
-			if (land[i][j].has_value() && land[i][j].value().gethp() <= 0)land[i][j] = std::nullopt;
-			if (land[i][j].has_value())
-				putimagePNG(170 + j * 80, 90 + i * 100, &land[i][j].value().dance());
+			auto& cell = land[i][j];
+			if (!cell) continue;
+
+			if (cell->gethp() <= 0) {   // 血量归零则移除
+				cell.reset();
+				continue;
+			}
+			cell->updateAnimation(deltaTime);
 		}
 	}
 }
 
+// 统一在这里绘制，保证层级：先画所有植物，再由 battle_manager 绘制僵尸与子弹
+void grassland::draw() {
+	for (int i = 0; i < row; ++i) {
+		for (int j = 0; j < col; ++j) {
+			if (land[i][j])
+				putimagePNG(170 + j * 80, 90 + i * 100, &land[i][j]->dance());
+		}
+	}
+}
 
 plant* grassland::getPlant(int row, int col) {
 	if (row < 0 || row >= this->row || col < 0 || col >= this->col) return nullptr;
-	if (!land[row][col].has_value()) return nullptr;
-	return &land[row][col].value();
+	return land[row][col].get();
 }
 
 void grassland::damagePlant(int row, int col, int dmg) {
 	if (row < 0 || row >= this->row || col < 0 || col >= this->col) return;
-	if (land[row][col].has_value()) {
-		land[row][col]->takeDamage(dmg);
-	}
+	if (land[row][col]) land[row][col]->takeDamage(dmg);
 }

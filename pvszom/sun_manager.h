@@ -12,6 +12,10 @@ public:
         return false;
     }
 
+    // 天上掉落的阳光与向日葵产出的阳光共用这套掉落逻辑。
+    // x/y 传入负值表示随机位置（用于天空掉落）。
+    void spawnDrop(float x = -1.0f, float y = -1.0f);
+
 private:
     std::vector<sun_drop> drops;
     float spawnTimer = 0;

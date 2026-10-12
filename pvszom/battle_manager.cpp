@@ -1,7 +1,9 @@
 #include "battle_manager.h"
 #include "plant_registry.h"
+#include "plants.h"
 #include "tool.h"
 #include <cstdlib>
+#include <cmath>
 #include <algorithm>
 #include <easyx.h>
 
@@ -14,10 +16,8 @@ void battle_manager::init(grassland* grass, int totalZombies) {
     bullets.clear();
     result = BattleResult::ongoing;
     for (int i = 0; i < 5; ++i)
-        for (int j = 0; j < 9; ++j) {
-            attackCooldownTimer[i][j] = 0;
+        for (int j = 0; j < 9; ++j)
             eatTimer[i][j] = 0;
-        }
 }
 
 
@@ -39,6 +39,29 @@ void battle_manager::trySpawnZombie(float deltaTime) {
     }
 }
 
+// 植物行为统一由这里驱动：把僵尸列表和两个回调打包成 BattleContext 注入进去，
+// 具体发射什么、产不产阳光由植物子类自己决定。
+void battle_manager::updatePlants(float deltaTime) {
+    BattleContext ctx;
+    ctx.zombies = &zombies;
+    ctx.spawnBullet = [this](float x, float y, int row, int damage, const void* img, bool ice) {
+        bullets.emplace_back(x, y, row, damage, static_cast<const IMAGE*>(img), ice);
+    };
+    ctx.spawnSun = [this]() {
+        if (sunSpawner) sunSpawner();
+    };
+
+    for (int i = 0; i < g->row; ++i) {
+        for (int j = 0; j < g->col; ++j) {
+            plant* p = g->getPlant(i, j);
+            if (!p) continue;
+            // 射手需要知道自己在哪一格，才能判断右方是否有僵尸、子弹从哪里射出
+            if (auto* sp = dynamic_cast<ShooterPlant*>(p)) sp->setGrid(i, j);
+            p->onTick(deltaTime, ctx);
+        }
+    }
+}
+
 void battle_manager::updateZombies(float deltaTime) {
     // 先移除已死亡的僵尸，避免在下面的遍历里 erase 破坏迭代器
     zombies.erase(std::remove_if(zombies.begin(), zombies.end(),
@@ -46,27 +69,38 @@ void battle_manager::updateZombies(float deltaTime) {
 
     for (auto& z : zombies) {
         const int row = z.getrow();
-        const int col = static_cast<int>((z.getx() - 170) / 80);
         bool eating = false;
+        int eatCol = -1;
 
-        if (col >= 0 && col < g->col && row >= 0 && row < g->row) {
-            if (g->getPlant(row, col)) {
-                eating = true;
-                // 按格累计啃食时间；每结算一次就减去一个周期，而不是清零，
-                // 否则同一格内多个僵尸会互相把计时重置，导致啃食速度被放大。
-                eatTimer[row][col] += deltaTime;
-                while (eatTimer[row][col] >= 1.0f) {
-                    g->damagePlant(row, col, z.getattack());
-                    eatTimer[row][col] -= 1.0f;
-                    if (!g->getPlant(row, col)) {   // 植物已死，停止啃食
-                        eating = false;
-                        eatTimer[row][col] = 0;
-                        break;
-                    }
-                }
+        // 原实现只判断僵尸所在的整数格。僵尸从右侧靠近时，前端已经贴到植物了，
+        // 它所在的格子却仍停在植物右边一格，于是出现"隔着一个格子就啃"的现象。
+        // 正确判定：把僵尸整体当作一个矩形（前缘往前 30 像素、自身宽约 60 像素），
+        // 找到它真正接触到的第一株植物。
+        const float front = z.getx() - 30.0f;   // 僵尸前端（嘴）
+        const float back = z.getx() + 60.0f;    // 僵尸尾部
+        const int firstCol = static_cast<int>(std::floor((front - 170.0f) / 80.0f));
+        const int lastCol = static_cast<int>(std::floor((back - 170.0f) / 80.0f));
+
+        if (row >= 0 && row < g->row) {
+            for (int c = firstCol; c <= lastCol; ++c) {
+                if (c < 0 || c >= g->col) continue;
+                if (g->getPlant(row, c)) { eatCol = c; break; }   // 取最靠右的被接触植物
             }
-            else {
-                eatTimer[row][col] = 0;   // 该格没有植物，计时归零
+        }
+
+        if (eatCol >= 0) {
+            eating = true;
+            // 按格累计啃食时间；每结算一次就减去一个周期，而不是清零，
+            // 否则同一格内多个僵尸会互相把计时重置，导致啃食速度被放大。
+            eatTimer[row][eatCol] += deltaTime;
+            while (eatTimer[row][eatCol] >= 1.0f) {
+                g->damagePlant(row, eatCol, z.getattack());
+                eatTimer[row][eatCol] -= 1.0f;
+                if (!g->getPlant(row, eatCol)) {   // 植物已被吃掉
+                    eating = false;
+                    eatTimer[row][eatCol] = 0;
+                    break;
+                }
             }
         }
 
@@ -80,51 +114,6 @@ void battle_manager::updateZombies(float deltaTime) {
     }
 }
 
-void battle_manager::updatePlantAttacks(float deltaTime) {
-    for (int i = 0; i < g->row; ++i) {
-        for (int j = 0; j < g->col; ++j) {
-            plant* p = g->getPlant(i, j);
-            if (!p || !p->canAttack()) continue;
-
-            attackCooldownTimer[i][j] += deltaTime;
-            if (attackCooldownTimer[i][j] < 1.5f) continue;
-
-            bool zombieAhead = false;
-            for (auto& z : zombies) {
-                if (z.getrow() == i && z.getx() > 170 + j * 80) {
-                    zombieAhead = true;
-                    break;
-                }
-            }
-            if (zombieAhead) {
-                attackCooldownTimer[i][j] = 0;
-                bullets.emplace_back(170 + j * 80 + 60, 90 + i * 100 + 40, i, p->getDamage(), &p->getBulletImg());
-            }
-        }
-    }
-}
-
-//void battle_manager::updateBullets(float deltaTime) {
-//    for (auto it = bullets.begin(); it != bullets.end();) {
-//        if (it->active) {
-//            putimagePNG(static_cast<int>(it->x), static_cast<int>(it->y - 40), it->img);
-//        }
-//
-//        it->x += 150.0f * deltaTime; // 子弹飞行速度：像素/秒
-//
-//        for (auto& z : zombies) {
-//            if (z.getrow() == it->row && it->x > z.getx() && it->x <= z.getx() + 60 && z.gethp() > 0) {
-//                z.takeDamage(it->damage);
-//                it->active = false;
-//                break;
-//            }
-//        }
-//
-//        if (it->x > 900) it->active = false;
-//
-//        ++it;
-//    }
-//}
 void battle_manager::updateBullets(float deltaTime) {
     for (auto& b : bullets) {
         b.x += 150.0f * deltaTime;
@@ -139,6 +128,7 @@ void battle_manager::updateBullets(float deltaTime) {
             // 判断子弹是否在僵尸区域内
             if (b.x >= z.getx() && b.x <= z.getx() + 60) {
                 z.takeDamage(b.damage);
+                if (b.ice) z.applySlow(3.0f);   // 寒冰射手：命中减速 3 秒
                 b.active = false;
                 break;
             }
@@ -160,8 +150,9 @@ void battle_manager::checkResult() {
 
 void battle_manager::update(float deltaTime) {
     trySpawnZombie(deltaTime);
-    updatePlantAttacks(deltaTime);
-    updateBullets(deltaTime);
+    updatePlants(deltaTime);    // 植物行为（射击/产阳光）
+    g->draw();                  // 先画植物
+    updateBullets(deltaTime);   // 再画子弹，最后画僵尸，保证僵尸在最上层
     updateZombies(deltaTime);
     checkResult();
 }

@@ -28,7 +28,9 @@
     <ClInclude Include="level_registry.h" />
     <ClInclude Include="plant_pool.h" />
     <ClInclude Include="input.h" />
-    <ClInclude Include="plant.h" />
+    <ClInclude Include="plant_base.h" />
+    <ClInclude Include="plants.h" />
+    <ClInclude Include="battle_context.h" />
     <ClInclude Include="plantinfo.h" />
     <ClInclude Include="plant_registry.h" />
     <ClInclude Include="SceneManager.h" />
@@ -144,7 +146,7 @@
       <AdditionalIncludeDirectories>E:\Microsoft Visual Studio\project\pvszom\vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/source-charset:utf-8 /execution-charset:gbk %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -163,7 +165,7 @@
       <AdditionalIncludeDirectories>E:\Microsoft Visual Studio\project\pvszom\vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/source-charset:utf-8 /execution-charset:gbk %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
