@@ -10,18 +10,21 @@
 #include"Button.h"
 
 void adventure_game_Scene::load() {
+	// 统一在加载处显式取整：EasyX 的 loadimage 需要 int，直接从 double 隐式转换会触发 C4244
+	auto px = [](double v) { return static_cast<int>(v); };
+
 	loadimage(&background, "res\\images\\adventure_game\\bg_3.png");
-	loadimage(&shopimg, "res\\images\\adventure_game\\wd.jpg", 650 * 0.9, 100 * 0.9);
-	loadimage(&poolimg, "res\\images\\adventure_game\\poolimg.jpg", 600 * 0.8, 650 * 0.8);
-	loadimage(&winimg, "res\\images\\adventure_game\\win.jpg",1279*0.4,1727*0.4);
-	loadimage(&failimg, "res\\images\\adventure_game\\fail.jpg", 1279 * 0.4, 1727 * 0.4);
+	loadimage(&shopimg, "res\\images\\adventure_game\\wd.jpg", px(650 * 0.9), px(100 * 0.9));
+	loadimage(&poolimg, "res\\images\\adventure_game\\poolimg.jpg", px(600 * 0.8), px(650 * 0.8));
+	loadimage(&winimg, "res\\images\\adventure_game\\win.jpg", px(1279 * 0.4), px(1727 * 0.4));
+	loadimage(&failimg, "res\\images\\adventure_game\\fail.jpg", px(1279 * 0.4), px(1727 * 0.4));
 	loadimage(&pauseimg, "res\\images\\adventure_game\\pause.jpg");
 
-	returnadventure = std::make_unique<Basicbutton>(0, 0, 620*0.58, 182*0.58, "res\\images\\adventure_game\\returnadventure.png");
-	next = std::make_unique<Basicbutton>(0, 0, 626*0.58, 183*0.58, "res\\images\\adventure_game\\next.png");
-	again= std::make_unique<Basicbutton>(0, 0, 584*0.58,164*0.58, "res\\images\\adventure_game\\again.png");
-	menu = std::make_unique<Basicbutton>(0, 0, 592*0.58, 184*0.58, "res\\images\\adventure_game\\menu.png");
-	start = std::make_unique<Basicbutton>(0, 0, 362 * 0.5, 80 * 0.5, "res\\images\\adventure_game\\game_start.png");
+	returnadventure = std::make_unique<Basicbutton>(0, 0, px(620 * 0.58), px(182 * 0.58), "res\\images\\adventure_game\\returnadventure.png");
+	next = std::make_unique<Basicbutton>(0, 0, px(626 * 0.58), px(183 * 0.58), "res\\images\\adventure_game\\next.png");
+	again= std::make_unique<Basicbutton>(0, 0, px(584 * 0.58), px(164 * 0.58), "res\\images\\adventure_game\\again.png");
+	menu = std::make_unique<Basicbutton>(0, 0, px(592 * 0.58), px(184 * 0.58), "res\\images\\adventure_game\\menu.png");
+	start = std::make_unique<Basicbutton>(0, 0, px(362 * 0.5), px(80 * 0.5), "res\\images\\adventure_game\\game_start.png");
 	
 	levelconfig = &level_registry::instance().get_levelinfo(curlevel);
 	pool = levelconfig->pool;
@@ -62,24 +65,43 @@ void adventure_game_Scene::ready() {
 		}
 	}
 
-	int x, y = 5, col = 0;
+	int y = 5, col = 0;
 
-	for (auto it = shop.begin(); it != shop.end();) {
+	for (size_t i = 0; i < shop.size(); ++i) {
 		col++;
-		int w = plant_registry::instance().get_plant_info(it->t).w,
-			h = plant_registry::instance().get_plant_info(it->t).h;
-		x = 30 + (col * (w + 7));
-		putimage(x, y, &plant_registry::instance().get_plant_info(it->t).cardimg);
+		const auto& t = shop[i].t;
+		const auto& info = plant_registry::instance().get_plant_info(t);
+		int w = info.w, h = info.h;
+		// 位置必须与 shoprendering() 的绘制位置完全一致，否则点击判定与画面错位
+		int x = 30 + (col * (w + 7));
+		putimage(x, y, &info.cardimg);
+	}
+
+	// 收集要移除的植物类型，循环外统一处理：避免在遍历 shop 时 erase 导致悬空
+	std::vector<Planttype> toRemove;
+	for (size_t i = 0; i < shop.size(); ++i) {
+		col = static_cast<int>(i) + 1;
+		const auto& t = shop[i].t;
+		const auto& info = plant_registry::instance().get_plant_info(t);
+		int w = info.w, h = info.h;
+		int x = 30 + (col * (w + 7));
 		if (input::instance().ishover(x, y, w, h) && input::instance().isclicked()) {
-			Planttype removedType = it->t;
-			it = shop.erase(it);
-			for (auto& i : pool.getplanttype()) {
-				if (i.t == removedType) {
-					i.optional = true;
-				}
-			}
+			// ready 阶段只是选卡，未扣费，所以取消选择不需要退款；把卡放回植物池即可
+			toRemove.push_back(t);
 		}
-		else ++it;
+	}
+
+	for (auto t : toRemove) {
+		// C++17 下没有 std::erase_if（那是 C++20），用 erase-remove 惯用法
+		shop.erase(std::remove_if(shop.begin(), shop.end(),
+			[t](const product& p) { return p.t == t; }), shop.end());
+		for (auto& i : pool.getplanttype()) {
+			if (i.t == t) i.optional = true;
+		}
+	}
+	if (!toRemove.empty()) {
+		// shop 已被改动，之前选中的卡可能已不存在，必须清空选择
+		hasSelection = false;
 	}
 }
 
@@ -95,32 +117,49 @@ void drawSunCount(int sunCount, int x, int y) {
 
 void adventure_game_Scene::shoprendering() {
 	putimage(10, 0, &shopimg);
-	int x, y = 5, col = 0;
+	int y = 5, col = 0;
 	for (auto& i : shop) {
 		col++;
-		x = 30 + (col * (plant_registry::instance().get_plant_info(i.t).w + 7));
-		putimage(x, y, &plant_registry::instance().get_plant_info(i.t).cardimg);
-		if (!i.isbuy() || !(suns.getSunCount() >= plant_registry::instance().get_plant_info(i.t).value))putimagePNG(x, y, plant_registry::instance().get_plant_info(i.t).w, plant_registry::instance().get_plant_info(i.t).h, &UIconfig::instance().getblack(), 180);
-		if (input::instance().isdragging() && input::instance().ishover(x, y, plant_registry::instance().get_plant_info(i.t).w, plant_registry::instance().get_plant_info(i.t).h) && !selectplant && i.isbuy()&& suns.getSunCount() >= plant_registry::instance().get_plant_info(i.t).value) {
-			//selectplant = i.t;
-			selectplant = &i;
+		const auto& info = plant_registry::instance().get_plant_info(i.t);
+		int x = 30 + (col * (info.w + 7));
+		putimage(x, y, &info.cardimg);
+		bool affordable = suns.getSunCount() >= info.value;
+		if (!i.isbuy() || !affordable) {
+			putimagePNG(x, y, info.w, info.h, &UIconfig::instance().getblack(), 180);
+		}
+		if (input::instance().isdragging() && input::instance().ishover(x, y, info.w, info.h)
+			&& !hasSelection && i.isbuy() && affordable) {
+			selectplant = i.t;
+			hasSelection = true;
 		}
 	}
-	if (selectplant && input::instance().isleftdown()) {
-		int offsetx = input::instance().getx() - 170, offsety = input::instance().gety() - 70, w = 80, h = 100;
-		//根据鼠标的x,y调整硬编码数值进行种植植物位置的偏移调整，w为列距，h为行距。
-		if (g.planting(offsety / h, offsetx / w, selectplant->t, suns.getSunCount())) {
-			selectplant->buy();
-			//printf("%d  %d\n", (input::instance().gety() - 100 ), (input::instance().getx() - 160));
-			//终端打印测试代码
+
+	if (hasSelection) {
+		// 每帧按值重新查找，而不是持有裸指针：shop 若在本帧被改动也不会悬空
+		product* sel = findAvailableProduct(selectplant);
+		if (!sel) {
+			hasSelection = false;   // 卡已被移除或正在冷却
+		}
+		else if (input::instance().isleftdown()) {
+			const int offsetx = input::instance().getx() - 170;
+			const int offsety = input::instance().gety() - 70;
+			const int w = 80, h = 100;   // 列距、行距
+			const auto& info = plant_registry::instance().get_plant_info(selectplant);
+			if (g.planting(offsety / h, offsetx / w, selectplant, suns.getSunCount())) {
+				suns.trySpend(info.value);   // 校验已通过，此处必然成功
+				sel->buy();
+				hasSelection = false;
+			}
 		}
 	}
-	if (selectplant && input::instance().isdragging()) {
-		putimagePNG(input::instance().getx() - 30, input::instance().gety() - 30, &plant_registry::instance().get_plant_info(selectplant->t).patimgs[0]);
+
+	if (hasSelection && input::instance().isdragging()) {
+		putimagePNG(input::instance().getx() - 30, input::instance().gety() - 30,
+			&plant_registry::instance().get_plant_info(selectplant).patimgs[0]);
 	}
-	else {
-		selectplant = nullptr;
-	}
+	// 注意：松手那一帧 isdragging() 已为 false、isleftdown() 为 true，
+	// 所以这里不能因为 !isdragging() 就清空选择，否则永远种不下去。
+	// 选择会在成功种植、卡被移除、或 start 进入战斗时清理。
 }
 
 

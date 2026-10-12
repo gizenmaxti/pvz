@@ -1,6 +1,7 @@
 #pragma once
 #include <easyx.h>
 #include<memory>
+#include<algorithm>
 #include "scene.h"
 #include "level_registry.h"
 #include "plant_pool.h"
@@ -51,8 +52,19 @@ public:
 		curlevel = l;
 	}
 private:
+	// 在卡槽中查找尚未冷却的指定植物；找不到返回 nullptr，天然规避悬空指针
+	product* findAvailableProduct(Planttype t) {
+		for (auto& p : shop) {
+			if (p.t == t && p.isbuy()) return &p;
+		}
+		return nullptr;
+	}
+
 	grassland g;
-	product* selectplant = nullptr;
+	// 用 Planttype 值记录当前选中的卡，而不是指向 shop 元素的裸指针：
+	// shop 是 vector，任何 erase/扩容都会让裸指针立刻悬空。
+	Planttype selectplant = Planttype::sunflower;
+	bool hasSelection = false;
 	process curprocess = process::ready;
 	//process curprocess = process::fail;
 	const levelinfo* levelconfig = nullptr;

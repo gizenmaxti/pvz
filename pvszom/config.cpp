@@ -40,7 +40,7 @@ void level_registry::load() {
 
 
 void plant_registry::load() {
-	int w = 63 * 0.9, h = 88 * 0.9;
+	int w = static_cast<int>(63 * 0.9), h = static_cast<int>(88 * 0.9);
 	plant_registry::putconfig(Planttype::peashooter, plantinfo(100, 100, 10, "Peashooter",
 		"res\\images\\cards\\peashooter.png", "res\\images\\plants\\peashooter", w, h,
 		true, 20, "res\\images\\plants\\bullet\\pea.png"));

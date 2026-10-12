@@ -9,9 +9,9 @@ void sun_manager::update(float deltaTime) {
     if (spawnTimer >= spawnInterval) {
         spawnTimer = 0;
         sun_drop d;
-        d.x = 170 + rand() % 650;
+        d.x = 170.0f + static_cast<float>(rand() % 650);
         d.y = 0;
-        d.targetY = 150 + rand() % 350;
+        d.targetY = 150.0f + static_cast<float>(rand() % 350);
         drops.push_back(d);
     }
 

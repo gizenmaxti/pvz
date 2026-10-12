@@ -4,15 +4,14 @@
 #include"tool.h"
 #include"adventure_game.h"
 
-bool grassland::planting(int row, int col, Planttype t,int &suncount) {
-	if (0 <= row && row < 5 && 0 <= col && col < 9 && !land[row][col].has_value()&& suncount>=plant_registry::instance().get_plant_info(t).value) {
-		land[row][col].emplace(t);
-		suncount -= plant_registry::instance().get_plant_info(t).value;
-		return true;
-	}
-	else {
-		return false;
-	}
+bool grassland::planting(int row, int col, Planttype t, int suncount) {
+	// 边界与占位校验统一走 row/col 成员，避免硬编码 5/9 与成员不一致
+	if (row < 0 || row >= this->row || col < 0 || col >= this->col) return false;
+	if (land[row][col].has_value()) return false;
+	if (suncount < plant_registry::instance().get_plant_info(t).value) return false;
+
+	land[row][col].emplace(t);
+	return true;
 }
 void grassland::remove(int row, int col) {
 	land[row][col] = std::nullopt;

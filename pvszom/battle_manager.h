@@ -34,6 +34,7 @@ private:
     float spawnInterval = 4.0f;
 
     float attackCooldownTimer[5][9] = {}; // 每个格子独立的攻击冷却计时
+    float eatTimer[5][9] = {};            // 每个格子独立的啃食计时（原来是函数级 static，会跨关卡残留）
 
     BattleResult result = BattleResult::ongoing;
 };

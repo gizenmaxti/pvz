@@ -1,7 +1,7 @@
 #include "zombie_registry.h"
 
 void zombie_registry::load() {
-    int w = 144, h = 166 * 0.8;
+    int w = 144, h = static_cast<int>(166 * 0.8);
     zombie_registry::instance().putconfig(Zombietype::zombie,
         zombieinfo(200, 15.0f, 20, "res\\images\\zombies\\zombie\\walk", "res\\images\\zombies\\zombie\\eat", w, h));
 

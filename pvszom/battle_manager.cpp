@@ -2,6 +2,7 @@
 #include "plant_registry.h"
 #include "tool.h"
 #include <cstdlib>
+#include <algorithm>
 #include <easyx.h>
 
 void battle_manager::init(grassland* grass, int totalZombies) {
@@ -13,8 +14,10 @@ void battle_manager::init(grassland* grass, int totalZombies) {
     bullets.clear();
     result = BattleResult::ongoing;
     for (int i = 0; i < 5; ++i)
-        for (int j = 0; j < 9; ++j)
+        for (int j = 0; j < 9; ++j) {
             attackCooldownTimer[i][j] = 0;
+            eatTimer[i][j] = 0;
+        }
 }
 
 
@@ -37,37 +40,43 @@ void battle_manager::trySpawnZombie(float deltaTime) {
 }
 
 void battle_manager::updateZombies(float deltaTime) {
-    for (auto it = zombies.begin(); it != zombies.end();) {
-        if (it->gethp() <= 0) {
-            it = zombies.erase(it);
-            continue;
-        }
+    // 先移除已死亡的僵尸，避免在下面的遍历里 erase 破坏迭代器
+    zombies.erase(std::remove_if(zombies.begin(), zombies.end(),
+        [](const zombie& z) { return z.gethp() <= 0; }), zombies.end());
 
-        int col = static_cast<int>((it->getx() - 170) / 80);
+    for (auto& z : zombies) {
+        const int row = z.getrow();
+        const int col = static_cast<int>((z.getx() - 170) / 80);
         bool eating = false;
 
-        if (col >= 0 && col < 9) {
-            plant* p = g->getPlant(it->getrow(), col);
-            if (p) {
+        if (col >= 0 && col < g->col && row >= 0 && row < g->row) {
+            if (g->getPlant(row, col)) {
                 eating = true;
-                // 每帧按秒结算伤害
-                static float acc[5][9] = {}; // 简化：用静态数组累计吃植物的时间
-                acc[it->getrow()][col] += deltaTime;
-                if (acc[it->getrow()][col] >= 1.0f) {
-                    g->damagePlant(it->getrow(), col, it->getattack());
-                    acc[it->getrow()][col] = 0;
+                // 按格累计啃食时间；每结算一次就减去一个周期，而不是清零，
+                // 否则同一格内多个僵尸会互相把计时重置，导致啃食速度被放大。
+                eatTimer[row][col] += deltaTime;
+                while (eatTimer[row][col] >= 1.0f) {
+                    g->damagePlant(row, col, z.getattack());
+                    eatTimer[row][col] -= 1.0f;
+                    if (!g->getPlant(row, col)) {   // 植物已死，停止啃食
+                        eating = false;
+                        eatTimer[row][col] = 0;
+                        break;
+                    }
                 }
+            }
+            else {
+                eatTimer[row][col] = 0;   // 该格没有植物，计时归零
             }
         }
 
-        if (!eating) it->move(deltaTime);
+        if (!eating) z.move(deltaTime);
 
-        putimagePNG(static_cast<int>(it->getx()) - 20, 90 + it->getrow() * 100 - 70, &it->anim(eating));
+        putimagePNG(static_cast<int>(z.getx()) - 20, 90 + row * 100 - 70, &z.anim(eating));
 
-        if (it->getx() < 10) {
+        if (z.getx() < 10) {
             result = BattleResult::lose;
         }
-        ++it;
     }
 }
 
@@ -117,29 +126,29 @@ void battle_manager::updatePlantAttacks(float deltaTime) {
 //    }
 //}
 void battle_manager::updateBullets(float deltaTime) {
-    for (auto it = bullets.begin(); it != bullets.end(); ) {
-        if (!it->active) { ++it; continue; }
+    for (auto& b : bullets) {
+        b.x += 150.0f * deltaTime;
 
-        it->x += 150.0f * deltaTime;
+        if (b.x > 900) { b.active = false; continue; }   // 飞出右边界即失效
 
-        if (it->x > 900) { it->active = false; ++it; continue; }
-
-        putimagePNG(static_cast<int>(it->x), static_cast<int>(it->y - 40), it->img);
+        putimagePNG(static_cast<int>(b.x), static_cast<int>(b.y - 40), b.img);
 
         for (auto& z : zombies) {
-            if (z.getrow() != it->row || z.gethp() <= 0) continue;
+            if (z.getrow() != b.row || z.gethp() <= 0) continue;
 
             // 判断子弹是否在僵尸区域内
-            if (it->x >= z.getx() && it->x <= z.getx() + 60) {
-                z.takeDamage(it->damage);
-                it->active = false;
+            if (b.x >= z.getx() && b.x <= z.getx() + 60) {
+                z.takeDamage(b.damage);
+                b.active = false;
                 break;
             }
         }
-
-        if (it->active) ++it;
-        else it = bullets.erase(it);
     }
+
+    // 统一移除失效子弹：原实现只标记 active=false 却留在容器里，
+    // 导致越界和命中过的子弹永久堆积，每帧仍被重复处理。
+    bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
+        [](const bullet& b) { return !b.active; }), bullets.end());
 }
 
 void battle_manager::checkResult() {

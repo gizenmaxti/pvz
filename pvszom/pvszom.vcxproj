@@ -51,7 +51,6 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />
-    <ClCompile Include="menu.h" />
     <ClCompile Include="adventure.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="sun_manager.cpp" />
@@ -145,11 +144,12 @@
       <AdditionalIncludeDirectories>E:\Microsoft Visual Studio\project\pvszom\vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\Microsoft Visual Studio\project\pvszom\vcpkg_installed\x64-windows\lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\Microsoft Visual Studio\project\pvszom\vcpkg_installed\x64-windows\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -163,11 +163,12 @@
       <AdditionalIncludeDirectories>E:\Microsoft Visual Studio\project\pvszom\vcpkg_installed\x64-windows\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\Microsoft Visual Studio\project\pvszom\vcpkg_installed\x64-windows\lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\Microsoft Visual Studio\project\pvszom\vcpkg_installed\x64-windows\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
