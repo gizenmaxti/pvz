@@ -31,8 +31,8 @@ void sun_manager::update(float deltaTime) {
         putimagePNG(static_cast<int>(it->x), static_cast<int>(it->y), &imgs[it->curframe]);
 
         if (input::instance().isclicked()
-            && input::instance().ishover(static_cast<int>(it->x), static_cast<int>(it->y), 50, 50)) {
-            sunCount += 25;
+            && input::instance().ishover(static_cast<int>(it->x), static_cast<int>(it->y), 100, 100)) {
+            sunCount += 50;
             it->active = false;
         }
         ++it;

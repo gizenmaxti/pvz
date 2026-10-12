@@ -17,6 +17,7 @@ void battle_manager::init(grassland* grass, int totalZombies) {
             attackCooldownTimer[i][j] = 0;
 }
 
+
 void battle_manager::trySpawnZombie(float deltaTime) {
     if (spawnedCount >= totalToSpawn) return;
     spawnTimer += deltaTime;
@@ -63,7 +64,7 @@ void battle_manager::updateZombies(float deltaTime) {
 
         putimagePNG(static_cast<int>(it->getx()) - 20, 90 + it->getrow() * 100 - 70, &it->anim(eating));
 
-        if (it->getx() < 160) {
+        if (it->getx() < 10) {
             result = BattleResult::lose;
         }
         ++it;
@@ -94,25 +95,50 @@ void battle_manager::updatePlantAttacks(float deltaTime) {
     }
 }
 
+//void battle_manager::updateBullets(float deltaTime) {
+//    for (auto it = bullets.begin(); it != bullets.end();) {
+//        if (it->active) {
+//            putimagePNG(static_cast<int>(it->x), static_cast<int>(it->y - 40), it->img);
+//        }
+//
+//        it->x += 150.0f * deltaTime; // 子弹飞行速度：像素/秒
+//
+//        for (auto& z : zombies) {
+//            if (z.getrow() == it->row && it->x > z.getx() && it->x <= z.getx() + 60 && z.gethp() > 0) {
+//                z.takeDamage(it->damage);
+//                it->active = false;
+//                break;
+//            }
+//        }
+//
+//        if (it->x > 900) it->active = false;
+//
+//        ++it;
+//    }
+//}
 void battle_manager::updateBullets(float deltaTime) {
-    for (auto it = bullets.begin(); it != bullets.end();) {
-        if (it->active) {
-            putimagePNG(static_cast<int>(it->x), static_cast<int>(it->y - 40), it->img);
-        }
+    for (auto it = bullets.begin(); it != bullets.end(); ) {
+        if (!it->active) { ++it; continue; }
 
-        it->x += 150.0f * deltaTime; // 子弹飞行速度：像素/秒
+        it->x += 150.0f * deltaTime;
+
+        if (it->x > 900) { it->active = false; ++it; continue; }
+
+        putimagePNG(static_cast<int>(it->x), static_cast<int>(it->y - 40), it->img);
 
         for (auto& z : zombies) {
-            if (z.getrow() == it->row && it->x >= z.getx() && it->x <= z.getx() + 60 && z.gethp() > 0) {
+            if (z.getrow() != it->row || z.gethp() <= 0) continue;
+
+            // 判断子弹是否在僵尸区域内
+            if (it->x >= z.getx() && it->x <= z.getx() + 60) {
                 z.takeDamage(it->damage);
                 it->active = false;
                 break;
             }
         }
 
-        if (it->x > 900) it->active = false;
-
-        ++it;
+        if (it->active) ++it;
+        else it = bullets.erase(it);
     }
 }
 

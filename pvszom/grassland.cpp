@@ -4,9 +4,10 @@
 #include"tool.h"
 #include"adventure_game.h"
 
-bool grassland::planting(int row, int col, Planttype t) {
-	if (0 <= row && row < 5 && 0 <= col && col < 9 && !land[row][col].has_value()) {
+bool grassland::planting(int row, int col, Planttype t,int &suncount) {
+	if (0 <= row && row < 5 && 0 <= col && col < 9 && !land[row][col].has_value()&& suncount>=plant_registry::instance().get_plant_info(t).value) {
 		land[row][col].emplace(t);
+		suncount -= plant_registry::instance().get_plant_info(t).value;
 		return true;
 	}
 	else {

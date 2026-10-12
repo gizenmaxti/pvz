@@ -11,7 +11,6 @@ void adventure_Scene::load() {
 	loadimage(&return_button, "res\\images\\menuselect\\return_button.jpg", 288 * 0.5, 64 * 0.5);
 	loadimage(&return_bbutton, "res\\images\\menuselect\\return_button.jpg", 288 * 0.6, 64 * 0.6);
 
-	//level_registry::instance().load();
 }
 void adventure_Scene::returnbutton() {
 	int x = 15, y = 570;
@@ -22,7 +21,6 @@ void adventure_Scene::returnbutton() {
 		}
 	}
 	else putimagePNG(x, y, &return_button);
-
 }
 
 void adventure_Scene::draw_level() {

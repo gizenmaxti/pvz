@@ -1,5 +1,6 @@
 #pragma once
 #include<easyx.h>
+#include"Button.h"
 class UIconfig {
 public:
 	static UIconfig& instance() {
@@ -10,7 +11,5 @@ public:
 	IMAGE& getblack() {
 		return black;
 	}
-private:
-
 	IMAGE black;
 };

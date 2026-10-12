@@ -7,7 +7,7 @@ public:
 		return instance;
 	}
 	void putconfig(level l, levelinfo li) {
-		levelinfos.emplace(l, li);
+		levelinfos.emplace(l, std::move(li));
 		levels.push_back(l);
 	}
 	void load();

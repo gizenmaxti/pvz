@@ -62,12 +62,10 @@ struct plantinfo {
 
         if (!bulletpath.empty()) {
             if (bulletpath.find(".png") != std::string::npos) {
-                // 单张图片（豌豆、冰冻这种）
                 bulletimgs.resize(1);
                 loadimage(&bulletimgs[0], bulletpath.c_str());
             }
             else {
-                // 文件夹形式（火焰豌豆这种带动画的）
                 int bc = countfiles(bulletpath);
                 bulletimgs.resize(bc);
                 for (int i = 0; i < bc; ++i)

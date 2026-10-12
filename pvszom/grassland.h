@@ -7,7 +7,7 @@ public:
 	grassland(int row = 5, int col = 9) :row(row), col(col) {
 		land.resize(row, std::vector<std::optional<plant>>(col));
 	}
-	bool planting(int row, int col, Planttype t);
+	bool planting(int row, int col, Planttype t,int &suncount);
 	void remove(int row, int col);
 	void update();
 	plant* getPlant(int row, int col);

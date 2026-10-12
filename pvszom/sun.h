@@ -14,7 +14,7 @@ public:
         int count = countfiles("res\\images\\plants\\sun");
         imgs.resize(count);
         for (int i = 0; i < count; ++i)
-            loadimage(&imgs[i], ("res\\images\\plants\\sun\\" + std::to_string(i) + ".png").c_str(), 500, 500);
+            loadimage(&imgs[i], ("res\\images\\plants\\sun\\" + std::to_string(i) + ".png").c_str(), 100, 100);
     }
     const std::vector<IMAGE>& getImgs() const { return imgs; }
 private:

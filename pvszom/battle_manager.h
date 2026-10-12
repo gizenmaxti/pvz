@@ -8,6 +8,11 @@ enum class BattleResult { ongoing, win, lose };
 
 class battle_manager {
 public:
+    battle_manager(int totals, int scount, float sTimer = 0, float sInterval = 4.0f)
+        :totalToSpawn(totals), spawnedCount(scount), spawnTimer(sTimer), spawnInterval(sInterval) {
+
+    }
+    battle_manager()=default;
     void init(grassland* grass, int totalZombies);
     void update(float deltaTime);
     BattleResult getResult() const { return result; }
