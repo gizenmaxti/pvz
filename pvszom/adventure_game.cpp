@@ -133,13 +133,13 @@ void adventure_game_Scene::shoprendering() {
 			putimagePNG(x, y, info.w, info.h, &UIconfig::instance().getblack(), 180);
 		}
 		else if (!canBuy) {
-			// 冷却中：盖一层更浅的黑色遮罩，高度 = 剩余冷却比例，
-			// 并锚定在卡片底部，随冷却推进自下而上变短（视觉上即"从下往上消失"）。
+			// 冷却中：盖一层更浅的黑色遮罩，高度 = 剩余冷却比例。
+			// 锚定在卡片顶部，随冷却推进遮罩底部向上收缩——即"从下往上变短"，
+			// 逐渐露出卡片下半部分，冷却结束时遮罩完全消失。
 			const float ratio = i.cooldownRatio();               // 1=刚买完，0=冷却结束
 			const int coveredH = static_cast<int>(info.h * ratio);
 			if (coveredH > 0) {
-				const int dstY = y + (info.h - coveredH);         // 贴到卡片底部
-				putimagePNG(x, dstY, info.w, coveredH, &UIconfig::instance().getblack(), 110);
+				putimagePNG(x, y, info.w, coveredH, &UIconfig::instance().getblack(), 110);
 			}
 		}
 
