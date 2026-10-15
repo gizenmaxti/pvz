@@ -10,7 +10,6 @@
 #include"Button.h"
 
 void adventure_game_Scene::load() {
-	// 统一在加载处显式取整：EasyX 的 loadimage 需要 int，直接从 double 隐式转换会触发 C4244
 	auto px = [](double v) { return static_cast<int>(v); };
 
 	loadimage(&background, "res\\images\\adventure_game\\bg_3.png");
@@ -88,7 +87,6 @@ void adventure_game_Scene::ready() {
 		int w = info.w, h = info.h;
 		int x = 30 + (col * (w + 7));
 		if (input::instance().ishover(x, y, w, h) && input::instance().isclicked()) {
-			// ready 阶段只是选卡，未扣费，所以取消选择不需要退款；把卡放回植物池即可
 			toRemove.push_back(t);
 		}
 	}
@@ -130,9 +128,19 @@ void adventure_game_Scene::shoprendering() {
 		const bool canBuy = i.isbuy();
 		const bool affordable = suns.getSunCount() >= info.value;
 
-		// 冷却中或阳光不足，都把整张卡片压暗，两者视觉效果保持一致
-		if (!canBuy || !affordable) {
+		// 不可购买（阳光不足）：整张卡片盖一层较深的黑色透明遮罩
+		if (!affordable) {
 			putimagePNG(x, y, info.w, info.h, &UIconfig::instance().getblack(), 180);
+		}
+		else if (!canBuy) {
+			// 冷却中：盖一层更浅的黑色遮罩，高度 = 剩余冷却比例，
+			// 并锚定在卡片底部，随冷却推进自下而上变短（视觉上即"从下往上消失"）。
+			const float ratio = i.cooldownRatio();               // 1=刚买完，0=冷却结束
+			const int coveredH = static_cast<int>(info.h * ratio);
+			if (coveredH > 0) {
+				const int dstY = y + (info.h - coveredH);         // 贴到卡片底部
+				putimagePNG(x, dstY, info.w, coveredH, &UIconfig::instance().getblack(), 110);
+			}
 		}
 
 		if (input::instance().isdragging() && input::instance().ishover(x, y, info.w, info.h)
