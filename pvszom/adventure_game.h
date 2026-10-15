@@ -19,8 +19,6 @@ enum process {
 struct product {
 	product(Planttype rt) :t(rt) {
 		cooldown = plant_registry::instance().get_plant_info(t).cooldown;
-		// 关键：初始化为"冷却已经结束"的状态。
-		// 原来 lastbuy 默认等于构造时刻，导致开局时每张卡都被判定为冷却中。
 		lastbuy = std::chrono::steady_clock::now() - std::chrono::seconds(cooldown + 1);
 	}
 
@@ -44,10 +42,7 @@ struct product {
 	std::chrono::steady_clock::time_point lastbuy;
 	int cooldown;
 };
-//struct uires {
-//	IMAGE background, shopimg, poolimg;
-//
-//};
+
 
 class adventure_game_Scene : public scene {
 public:
@@ -75,7 +70,6 @@ private:
 
 	grassland g;
 	// 用 Planttype 值记录当前选中的卡，而不是指向 shop 元素的裸指针：
-	// shop 是 vector，任何 erase/扩容都会让裸指针立刻悬空。
 	Planttype selectplant = Planttype::sunflower;
 	bool hasSelection = false;
 	process curprocess = process::ready;

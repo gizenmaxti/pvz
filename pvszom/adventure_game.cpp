@@ -92,7 +92,6 @@ void adventure_game_Scene::ready() {
 	}
 
 	for (auto t : toRemove) {
-		// C++17 下没有 std::erase_if（那是 C++20），用 erase-remove 惯用法
 		shop.erase(std::remove_if(shop.begin(), shop.end(),
 			[t](const product& p) { return p.t == t; }), shop.end());
 		for (auto& i : pool.getplanttype()) {
@@ -157,6 +156,9 @@ void adventure_game_Scene::shoprendering() {
 			hasSelection = false;   // 卡已被移除或进入冷却
 		}
 		else if (input::instance().isleftdown()) {
+			// 松开左键 = 一次种植尝试结束。
+			// 无论是否种下（含在草地外松开），都必须取消选中，
+			// 否则残留的 selectplant 会让玩家下次点击草地时"凭空"种下上次的植物。
 			const int offsetx = input::instance().getx() - 170;
 			const int offsety = input::instance().gety() - 70;
 			const int w = 80, h = 100;   // 列距、行距
@@ -165,8 +167,8 @@ void adventure_game_Scene::shoprendering() {
 			if (g.planting(offsety / h, offsetx / w, selectplant, suns.getSunCount())
 				&& suns.trySpend(info.value)) {
 				sel->buy();              // 购买成功，进入冷却
-				hasSelection = false;
 			}
+			hasSelection = false;        // 无论结果如何，取消选中
 		}
 	}
 
@@ -174,9 +176,7 @@ void adventure_game_Scene::shoprendering() {
 		putimagePNG(input::instance().getx() - 30, input::instance().gety() - 30,
 			&plant_registry::instance().get_plant_info(selectplant).patimgs[0]);
 	}
-	// 注意：松手那一帧 isdragging() 已为 false、isleftdown() 为 true，
-	// 所以这里不能因为 !isdragging() 就清空选择，否则永远种不下去。
-	// 选择会在成功种植、卡被移除、或 start 进入战斗时清理。
+
 }
 
 

@@ -9,7 +9,7 @@ bool grassland::planting(int row, int col, Planttype t, int suncount) {
 	if (suncount < plant_registry::instance().get_plant_info(t).value) return false;
 
 	auto p = plant_registry::create(t);
-	if (!p) return false;                                   // 未注册工厂的类型
+	if (!p) return false;                                 
 	land[row][col] = std::move(p);
 	return true;
 }

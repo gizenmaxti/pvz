@@ -50,7 +50,8 @@ protected:
     // 子类实现：本帧发射什么
     virtual void onFire(BattleContext& ctx) = 0;
 
-    float bulletX() const { return kFieldLeft + static_cast<float>(gridCol) * kCellW + 60.0f; }
+    // 子弹从植物身侧偏左处射出，紧贴植物本体（+40 而非 +60，避免离植物太远）
+    float bulletX() const { return kFieldLeft + static_cast<float>(gridCol) * kCellW + 40.0f; }
     float bulletY() const { return kFieldTop + static_cast<float>(gridRow) * kCellH + 40.0f; }
 
     int gridRow = 0;

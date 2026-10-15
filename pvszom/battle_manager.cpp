@@ -75,27 +75,22 @@ void battle_manager::updateZombies(float deltaTime) {
 
         // 僵尸与植物的接触判定。
         //
-        // 实测素材后修正（这一步之前一直是我靠猜）：
-        //   * 僵尸原图 166x144，但非透明像素只占 x∈[65,141]，即身体长在图片右侧；
-        //   * 代码里绘制位置是 x-20，再缩放到 144x106 显示；
-        //   两相叠加，僵尸的视觉主体中心大约落在 x+40 处，而不是 x 本身。
-        // 因此"僵尸中心进入植物所在格"才是真正面对面接触的时刻。
-        constexpr float kZombieCenterOffset = 40.0f;   // 僵尸视觉中心相对其坐标的偏移
+        // 僵尸移动是浮点型，按"取整后与植物所在格子比较"来判定：
+        // 僵尸坐标 z.getx() 落到植物格子的整数列内才算接触，
+        // 不再叠加中心偏移，让攻击距离再收近一些。
         constexpr float kCellW = 80.0f;
         constexpr float kFieldLeft = 170.0f;
 
-        const float center = z.getx() + kZombieCenterOffset;
-
-        // 僵尸已经越过最左侧（列号会变成负数）：直接判定失败并停止后续逻辑。
+        // 僵尸已经越过最左侧：直接判定失败并停止后续逻辑。
         // 原实现只在 x<10 时置结果，但循环体仍会继续执行，
         // 于是 eatTimer[row][负数] 写越界 —— 这也是调试断言崩溃的根因之一。
-        if (center < kFieldLeft) {
+        if (z.getx() < kFieldLeft) {
             result = BattleResult::lose;
             continue;
         }
 
         if (row >= 0 && row < g->row) {
-            const int col = static_cast<int>(std::floor((center - kFieldLeft) / kCellW));
+            const int col = static_cast<int>(std::floor((z.getx() - kFieldLeft) / kCellW));
             if (col >= 0 && col < g->col && g->getPlant(row, col)) {
                 eatCol = col;
             }
